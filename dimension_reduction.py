@@ -1,30 +1,37 @@
 import sys
 import matplotlib.pyplot as plt
 import pandas as pd
+from sklearn.manifold import MDS, LocallyLinearEmbedding
 
 
 def load_data():
-    # return x and labels?
-    pass
+    x_train = None
+    y_train = 0
+    x_train_flat = x_train.reshape(-1, 3072)
+    feat_cols = [f'feat{i}' for i in range(x_train_flat.shape[1])]
+    data_df = pd.DataFrame(x_train_flat,columns=feat_cols)
+    data_df['label'] = y_train
+    print(f'num features: {len(feat_cols)}\nSize of the dataframe: {data_df.shape}')
 
 
-def dim_reduction(data, alg_type):
+def dim_reduction(data, alg_type, n_components=2):
     model = None
     if alg_type == "PCA":
         pass
     elif alg_type == "CMDS":
-        pass
+        model=MDS(n_components=n_components)
     elif alg_type == "ISO":
         pass
     elif alg_type == "LLE":
-        pass
+        model = LocallyLinearEmbedding(n_neighbors=5, n_components=n_components)
     elif alg_type == "EigenMaps":
         pass
     else:
         raise Exception("unrecognized algorithm type")
 
-    new_data = model.fit_transform(data)
-    return new_data
+    transformed_data = model.fit_transform(data)
+
+    return transformed_data
 
 
 def visualize(data_df, labels_names, title = f"alg_type on dataset_name",out=""):
@@ -37,10 +44,11 @@ def visualize(data_df, labels_names, title = f"alg_type on dataset_name",out="")
     plt.title(title, fontsize=20)
     colors = ["red", "blue", "green", "yellow", "purple", "orange", "black" ]
     assert len(labels_names) < len(colors), "not enough colors for num labels"
-    for target, color in zip(labels_names, colors):
-        indicesToKeep = data_df['label'] == target
-        plt.scatter(data_df.loc[indicesToKeep, 'dimension 1']
-                    , data_df.loc[indicesToKeep, 'dimension 2'], c=color, s=50)
+    for label_n, color in zip(labels_names, colors):
+        indicesToKeep = data_df['label'] == label_n
+        plt.scatter(data_df.loc[indicesToKeep, 'principle_cmp1']
+                    , data_df.loc[indicesToKeep, 'principle_cmp2'], c=color, s=50)
+    plt.legend(labels_names, prop={'size': 15})
 
     plt.savefig(out)
 
