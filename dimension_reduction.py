@@ -10,8 +10,8 @@ from sklearn.datasets import fetch_openml
 dimension_reduction_algo_types = ["PCA", "CMDS", "ISO", "LLE", "EigenMaps"]
 
 
-def load_data():
-    mnist = fetch_openml('mnist_784')
+def load_data(base_db):
+    mnist = base_db
     number_9_x_train = mnist.data[mnist.target == "9"][:100]
     number_9_y_train_tmp = mnist.target[mnist.target == "9"][:100]
     number_6_x_train = mnist.data[mnist.target == "6"][:100]
@@ -84,15 +84,13 @@ def visualize(data_df, target_names, label_data, title=f"alg_type on dataset_nam
     plt.savefig(out)
 
 
-def run_single_algo(alg_type="PCA"):
-    data, labels, target_names = load_data()
+def run_single_algo(base_db, alg_type="PCA"):
+    data, labels, target_names = load_data(base_db)
     reduced_data = dim_reduction(data, alg_type)
     visualize(reduced_data, target_names, data['label'], out=f"{alg_type}.png")
 
 
 if __name__ == '__main__':
-    run_single_algo(dimension_reduction_algo_types[0])
-    run_single_algo(dimension_reduction_algo_types[1])
-    run_single_algo(dimension_reduction_algo_types[2])
-    run_single_algo(dimension_reduction_algo_types[3])
-    run_single_algo(dimension_reduction_algo_types[4])
+    base_db = fetch_openml('mnist_784')
+    for algo_type in dimension_reduction_algo_types:
+        run_single_algo(base_db, algo_type)
