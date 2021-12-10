@@ -5,25 +5,37 @@ from sklearn.decomposition import PCA
 from sklearn.manifold import MDS, LocallyLinearEmbedding, Isomap, SpectralEmbedding
 from sklearn.preprocessing import StandardScaler
 from sklearn.datasets import load_breast_cancer
+from sklearn.datasets import fetch_openml
 
 dimension_reduction_algo_types = ["PCA", "CMDS", "ISO", "LLE", "EigenMaps"]
 
 
 def load_data():
-    breast_cancer = load_breast_cancer()
-    x_train = breast_cancer.data
-    y_train = breast_cancer.target
-    features_labels = np.append(breast_cancer.feature_names, 'label')
+    mnist = fetch_openml('mnist_784')
+    number_9_x_train = mnist.data[mnist.target == "9"][:100]
+    number_9_y_train_tmp = mnist.target[mnist.target == "9"][:100]
+    number_6_x_train = mnist.data[mnist.target == "6"][:100]
+    number_6_y_train_tmp = mnist.target[mnist.target == "6"][:100]
 
-    y_train = np.reshape(y_train, (y_train.shape[0], 1))
-    final_breast_data = np.concatenate([x_train, y_train], axis=1)
+    number_9_y_train = np.zeros((number_9_y_train_tmp.shape[0], 1))
+    i = 0
+    for train_tuple in number_9_y_train_tmp.iteritems():
+        number_9_y_train[i] = train_tuple[1]
+        i += 1
+    number_9_train = np.concatenate([number_9_x_train, number_9_y_train], axis=1)
+    number_6_y_train = np.zeros((number_6_y_train_tmp.shape[0], 1))
+    i = 0
+    for train_tuple in number_6_y_train_tmp.iteritems():
+        number_6_y_train[i] = train_tuple[1]
+        i += 1
+    number_6_train = np.concatenate([number_6_x_train, number_6_y_train], axis=1)
+    numbers_train = np.concatenate([number_9_train, number_6_train], axis=0)
 
-    data_df = pd.DataFrame(final_breast_data)
+    data_df = pd.DataFrame(numbers_train)
+    data_df.columns = np.append(mnist.feature_names, 'label')
 
-    data_df.columns = features_labels
-
-    print(f'num features: {len(features_labels)}\nSize of the dataframe: {data_df.shape}')
-    return data_df, features_labels, breast_cancer.target_names
+    print(f'num features: {len(data_df.columns)}\nSize of the dataframe: {data_df.shape}')
+    return data_df, data_df.columns, [6.0, 9.0]
 
 
 def dim_reduction(data, alg_type, n_components=2):
@@ -47,13 +59,13 @@ def dim_reduction(data, alg_type, n_components=2):
     else:
         raise Exception("unrecognized algorithm type")
 
-    transformed_data_Df = pd.DataFrame(data=transformed_data
+    transformed_data_df = pd.DataFrame(data=transformed_data
                                        , columns=['principle_cmp1', 'principle_cmp2'])
 
-    return transformed_data_Df
+    return transformed_data_df
 
 
-def visualize(data_df, target_names, label_data, title = f"alg_type on dataset_name",out=""):
+def visualize(data_df, target_names, label_data, title=f"alg_type on dataset_name", out=""):
     plt.figure()
     plt.figure(figsize=(10, 10))
     plt.xticks(fontsize=12)
@@ -75,10 +87,7 @@ def visualize(data_df, target_names, label_data, title = f"alg_type on dataset_n
 def run_single_algo(alg_type="PCA"):
     data, labels, target_names = load_data()
     reduced_data = dim_reduction(data, alg_type)
-
-    data['label'].replace(0, 'benign', inplace=True)
-    data['label'].replace(1, 'malignant', inplace=True)
-    visualize(reduced_data, target_names, data['label'], "", f"{alg_type}.png")
+    visualize(reduced_data, target_names, data['label'], out=f"{alg_type}.png")
 
 
 if __name__ == '__main__':
