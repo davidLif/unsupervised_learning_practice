@@ -10,63 +10,44 @@ dimension_reduction_algo_types = ["PCA", "CMDS", "ISO", "LLE", "EigenMaps"]
 dimension_reduction_algo_types_with_neighbors = ["ISO", "LLE", "EigenMaps"]
 
 
-def load_data(base_db):
+def load_data(base_db, num_records=200):
     mnist = base_db
-    number_9_x_train = mnist.data[mnist.target == "9"][:200]
-    number_9_y_train_tmp = mnist.target[mnist.target == "9"][:200]
-    number_6_x_train = mnist.data[mnist.target == "6"][:200]
-    number_6_y_train_tmp = mnist.target[mnist.target == "6"][:200]
-    number_5_x_train = mnist.data[mnist.target == "5"][:200]
-    number_5_y_train_tmp = mnist.target[mnist.target == "5"][:200]
-
-    number_9_y_train = np.zeros((number_9_y_train_tmp.shape[0], 1))
-    i = 0
-    for train_tuple in number_9_y_train_tmp.iteritems():
-        number_9_y_train[i] = train_tuple[1]
-        i += 1
-    number_9_train = np.concatenate([number_9_x_train, number_9_y_train], axis=1)
-
-    number_6_y_train = np.zeros((number_6_y_train_tmp.shape[0], 1))
-    i = 0
-    for train_tuple in number_6_y_train_tmp.iteritems():
-        number_6_y_train[i] = train_tuple[1]
-        i += 1
-    number_6_train = np.concatenate([number_6_x_train, number_6_y_train], axis=1)
-
-    number_5_y_train = np.zeros((number_5_y_train_tmp.shape[0], 1))
-    i = 0
-    for train_tuple in number_5_y_train_tmp.iteritems():
-        number_5_y_train[i] = train_tuple[1]
-        i += 1
-    number_5_train = np.concatenate([number_5_x_train, number_5_y_train], axis=1)
-
-    numbers_train = np.concatenate([number_9_train, number_5_train, number_6_train], axis=0)
-
-    data_df = pd.DataFrame(numbers_train)
+    all_train_sets = []
+    for cls in ["9", "6", "5"]:
+        idxs = mnist.target == cls
+        x_train = mnist.data[idxs][:num_records]
+        y_train_tmp = mnist.target[idxs][:num_records]
+        y_train = np.zeros((y_train_tmp.shape[0], 1))
+        for i, train_tuple in enumerate(y_train_tmp.iteritems()):
+            y_train[i] = train_tuple[1]
+        all_train_sets.append(np.concatenate([x_train, y_train], axis=1))
+    all_train_sets = np.concatenate(all_train_sets, axis=0)
+    data_df = pd.DataFrame(all_train_sets)
     data_df.columns = np.append(mnist.feature_names, 'label')
 
-    print(f'num features: {len(data_df.columns)}\nSize of the dataframe: {data_df.shape}')
-    return data_df, data_df.columns, [5.0, 6.0, 9.0]
+    print(f'num features: {len(data_df.columns)-1}\nSize of the dataframe: {data_df.shape}')
+    return data_df, [5.0, 6.0, 9.0]
 
 
-def dim_reduction(data, alg_type, n_components=2, k=5):
-    if alg_type == "PCA":
-        x = data.loc[:, data.columns[:data.shape[1] - 1]].values
+def dim_reduction(data, alg_type, n_components=2, k=5, norm=True):
+    x = data.loc[:, data.columns[:- 1]].values
+    if norm:
         x = StandardScaler().fit_transform(x)  # normalizing the features
+    if alg_type == "PCA":
         model = PCA(n_components=n_components)
         transformed_data = model.fit_transform(x)
     elif alg_type == "CMDS":
         model = MDS(n_components=n_components)
-        transformed_data = model.fit_transform(data)
+        transformed_data = model.fit_transform(x)
     elif alg_type == "ISO":
         model = Isomap(n_neighbors=k, n_components=n_components)
-        transformed_data = model.fit_transform(data)
+        transformed_data = model.fit_transform(x)
     elif alg_type == "LLE":
         model = LocallyLinearEmbedding(n_neighbors=k, n_components=n_components)
-        transformed_data = model.fit_transform(data)
+        transformed_data = model.fit_transform(x)
     elif alg_type == "EigenMaps":
         model = SpectralEmbedding(n_neighbors=k, n_components=n_components)
-        transformed_data = model.fit_transform(data)
+        transformed_data = model.fit_transform(x)
     else:
         raise Exception("unrecognized algorithm type")
 
@@ -95,19 +76,25 @@ def visualize(data_df, target_names, label_data, title=f"alg_type on dataset_nam
     plt.close()
 
 
-def run_single_algo(base_db, alg_type="PCA", k=5):
-    data, labels, target_names = load_data(base_db)
+def run_single_algo(data, target_names, alg_type="PCA", k=5):
     reduced_data = dim_reduction(data, alg_type, k=k)
     if alg_type not in dimension_reduction_algo_types_with_neighbors:
         k = ""
-    visualize(reduced_data, target_names, data['label'], title=f"{alg_type}_{k} for 6\9 images db"
+    visualize(reduced_data, target_names, data['label'], title=f"{alg_type}_{k} for 5-6-9 images db"
               , out=f"{alg_type}_{k}.png")
 
 
-if __name__ == '__main__':
+def main():
     base_db = fetch_openml('mnist_784')
-    run_single_algo(base_db, "PCA")
-    run_single_algo(base_db, "CMDS")
-    for k in [5, 10, 20, 50, 100]:
-        for algo_type in dimension_reduction_algo_types_with_neighbors:
-            run_single_algo(base_db, algo_type, k)
+    data, target_names = load_data(base_db, num_records=200)
+    ks = [5, 10, 20, 50, 100]
+    for alg_type in dimension_reduction_algo_types:
+        if alg_type in dimension_reduction_algo_types_with_neighbors:
+            for k in ks:
+                run_single_algo(data, target_names, alg_type, k)
+        else:
+            run_single_algo(data, target_names, alg_type)
+
+
+if __name__ == '__main__':
+    main()
