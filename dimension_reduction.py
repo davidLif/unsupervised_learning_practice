@@ -4,33 +4,33 @@ import pandas as pd
 from sklearn.decomposition import PCA
 from sklearn.manifold import MDS, LocallyLinearEmbedding, Isomap, SpectralEmbedding
 from sklearn.preprocessing import StandardScaler
-from sklearn.datasets import fetch_openml
+from sklearn.datasets import fetch_openml, load_digits
 
 dimension_reduction_algo_types = ["PCA", "CMDS", "ISO", "LLE", "EigenMaps"]
 dimension_reduction_algo_types_with_neighbors = ["ISO", "LLE", "EigenMaps"]
 
 
-def load_data(base_db, num_records=200):
-    mnist = base_db
+def load_data(num_records=200):
+    data, labels = load_digits(return_X_y=True)
+    (n_samples, n_features), n_digits = data.shape, np.unique(labels).size
+
+    print(f"# digits: {n_digits}; # samples: {n_samples}; # features {n_features}")
     all_train_sets = []
-    for cls in ["9", "6", "5"]:
-        idxs = mnist.target == cls
-        x_train = mnist.data[idxs][:num_records]
-        y_train_tmp = mnist.target[idxs][:num_records]
-        y_train = np.zeros((y_train_tmp.shape[0], 1))
-        for i, train_tuple in enumerate(y_train_tmp.iteritems()):
-            y_train[i] = train_tuple[1]
-        all_train_sets.append(np.concatenate([x_train, y_train], axis=1))
+    classes = [5.0, 6.0, 9.0]
+    for cls in classes:
+        idxs = labels == cls
+        x_train = data[idxs][:num_records]
+        y_train = labels[idxs][:num_records]
+        all_train_sets.append(np.concatenate([x_train, np.expand_dims(y_train,1)], axis=1))
     all_train_sets = np.concatenate(all_train_sets, axis=0)
     data_df = pd.DataFrame(all_train_sets)
-    data_df.columns = np.append(mnist.feature_names, 'label')
+    data_df.columns = np.append([f"feature{i}" for i in range(n_features)], 'label')
 
     print(f'num features: {len(data_df.columns)-1}\nSize of the dataframe: {data_df.shape}')
-    return data_df, [5.0, 6.0, 9.0]
+    return data_df, classes
 
 
-def dim_reduction(data, alg_type, n_components=2, k=5, norm=True):
-    x = data.loc[:, data.columns[:- 1]].values
+def dim_reduction(x, alg_type, n_components=2, k=5, norm=True):
     if norm:
         x = StandardScaler().fit_transform(x)  # normalizing the features
     if alg_type == "PCA":
@@ -76,17 +76,18 @@ def visualize(data_df, target_names, label_data, title=f"alg_type on dataset_nam
     plt.close()
 
 
-def run_single_algo(data, target_names, alg_type="PCA", k=5):
-    reduced_data = dim_reduction(data, alg_type, k=k)
+def run_single_algo(data, target_names, alg_type="PCA", k=5, norm=True):
+    x = data.loc[:, data.columns[:- 1]].values
+    reduced_data = dim_reduction(x, alg_type, k=k, norm=norm)
     if alg_type not in dimension_reduction_algo_types_with_neighbors:
         k = ""
-    visualize(reduced_data, target_names, data['label'], title=f"{alg_type}_{k} for 5-6-9 images db"
-              , out=f"{alg_type}_{k}.png")
+    name = f"{alg_type}_{k}" if norm else f"{alg_type}_{k}_unnormed"
+    visualize(reduced_data, target_names, data['label'], title=f"{name} for 5-6-9 images db"
+              , out=f"{name}.png")
 
 
 def main():
-    base_db = fetch_openml('mnist_784')
-    data, target_names = load_data(base_db, num_records=200)
+    data, target_names = load_data(num_records=200)
     ks = [5, 10, 20, 50, 100]
     for alg_type in dimension_reduction_algo_types:
         if alg_type in dimension_reduction_algo_types_with_neighbors:
