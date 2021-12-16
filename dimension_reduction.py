@@ -104,14 +104,13 @@ def main():
     data, target_names = load_data(num_records=200)
     for clstr_alg in clustering_algo_types:
         reduction_results = {}
-        if clstr_alg == "DBSCAN":
-            target_names.append(-1)
         for alg_type in dimension_reduction_algo_types:
             reduced_data, n_labels = run_single_algo(data, alg_type, clstr_alg, 50)
             reduction_results[alg_type] = {"reduced_data": reduced_data, "labels": n_labels}
             if alg_type not in dimension_reduction_algo_types_with_neighbors:
                 k = ""
             name = f"{clstr_alg}_{alg_type}"
+            target_names = np.unique(n_labels)
             visualize(reduced_data, target_names, n_labels, title=f"{name} on 5-6-9", out=f"{name}.png")
 
 
