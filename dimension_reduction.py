@@ -63,7 +63,7 @@ def apply_clustering(x, labels, alg_type):
         model = KMeans(init="k-means++", n_clusters=3, n_init=4)
     elif alg_type == "Hierarchical":
         model = AgglomerativeClustering(n_clusters=3)
-    elif alg_type == "DBSACN":
+    elif alg_type == "DBSCAN":
         model = DBSCAN(eps=0.15, min_samples=5)
     else:
         raise Exception("no such clustering algorithm")
