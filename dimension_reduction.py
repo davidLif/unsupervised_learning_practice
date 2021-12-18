@@ -1,5 +1,3 @@
-import time
-
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -122,7 +120,7 @@ def check_dbscan_runner():
                 print(f"Too many clusters. {eps}_{min_samples} {len(target_names)}")
                 continue
             visualize(reduced_data, target_names, n_labels, title=f"{name} on 5-6-9"
-                      , out=f"{name}_{eps}_{min_samples}.png")
+                      , out=f"{name}_{eps}_{min_samples}.svg")
 
 
 def run_all_combinations():
@@ -136,7 +134,7 @@ def run_all_combinations():
             reduction_results[alg_type] = {"reduced_data": reduced_data, "labels": n_labels}
             name = f"{clstr_alg}_{alg_type}"
             target_names = np.unique(n_labels)
-            visualize(reduced_data, target_names, n_labels, title=f"{name} on 5-6-9", out=f"{name}.png")
+            visualize(reduced_data, target_names, n_labels, title=f"{name} on 5-6-9", out=f"{name}.svg")
 
 
 def main():
