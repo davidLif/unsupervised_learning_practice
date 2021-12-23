@@ -9,6 +9,13 @@ from sklearn.datasets import load_digits
 
 clustering_algo_types = ["KMeans", "Hierarchical", "DBSCAN"]
 dimension_reduction_algo_types = ["PCA", "CMDS", "ISO", "LLE", "EigenMaps"]
+dimension_reduction_after_clustering = {
+    "PCA": True,
+    "CMDS": True,
+    "ISO": False,
+    "LLE": False,
+    "EigenMaps": False
+}
 algo_types_clustering_params = {
     "PCA": {"eps": 1, "min_samples": 19},
     "CMDS": {"eps": 4, "min_samples": 8},
@@ -64,7 +71,7 @@ def dim_reduction(x, alg_type, n_components=2, k=5):
     return transformed_data_df
 
 
-def apply_clustering(x, labels, alg_type, eps=0.15, min_samples=5):
+def apply_clustering(x, alg_type, eps=0.15, min_samples=5):
     if alg_type == "KMeans":
         model = KMeans(init="k-means++", n_clusters=3, n_init=4)
     elif alg_type == "Hierarchical":
@@ -73,7 +80,7 @@ def apply_clustering(x, labels, alg_type, eps=0.15, min_samples=5):
         model = DBSCAN(eps=eps, min_samples=min_samples)
     else:
         raise Exception("no such clustering algorithm")
-    new_labels = model.fit_predict(x, labels)
+    new_labels = model.fit_predict(x, None)
     return new_labels
 
 
@@ -100,9 +107,13 @@ def visualize(data_df, target_names, label_data, title=f"alg_type on dataset_nam
 
 def run_single_algo(data, alg_type="PCA", clstr_type="KMeans", k=50, eps=0.15, min_samples=5):
     x = data.loc[:, data.columns[:- 1]].values
-    labels = data['label']
-    reduced_data = dim_reduction(x, alg_type, k=k)
-    new_labels = apply_clustering(reduced_data.values, labels, clstr_type, eps=eps, min_samples=min_samples)
+
+    if dimension_reduction_after_clustering[alg_type]:
+        new_labels = apply_clustering(x, clstr_type, eps=eps, min_samples=min_samples)
+        reduced_data = dim_reduction(x, alg_type, k=k)
+    else:
+        reduced_data = dim_reduction(x, alg_type, k=k)
+        new_labels = apply_clustering(reduced_data.values, clstr_type, eps=eps, min_samples=min_samples)
     return reduced_data, new_labels
 
 
