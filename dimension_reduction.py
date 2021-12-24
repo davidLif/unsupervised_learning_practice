@@ -1,3 +1,5 @@
+import itertools
+
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -8,8 +10,6 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.datasets import load_digits
 from sklearn.metrics import mutual_info_score, silhouette_score
 from sklearn.model_selection import train_test_split
-
-from loss_functions import kmeans_loss
 
 clustering_algo_types = ["KMeans", "Hierarchical", "DBSCAN"]
 dimension_reduction_algo_types = ["PCA", "CMDS", "ISO", "LLE", "EigenMaps"]
@@ -22,25 +22,30 @@ dimension_reduction_after_clustering = {
 }
 algo_types_clustering_params = {
     "DBSCAN": {
-        "PCA": {"eps": 1, "min_samples": 19},
-        "CMDS": {"eps": 4, "min_samples": 8},
-        "ISO": {"eps": 10, "min_samples": 22},
-        "LLE": {"eps": 0.01, "min_samples": 10},
-        "EigenMaps": {"eps": 0.0007, "min_samples": 5}
+        "PCA": {"dim_reduction_after": [True, False], "eps": [0.5, 1, 1.5], "min_samples": [15, 20, 25]},
+        "CMDS": {"dim_reduction_after": [True, False], "eps": [3, 4, 5], "min_samples": [7, 8, 9]},
+        "ISO": {"dim_reduction_after": [True, False], "eps": [8, 10, 12], "min_samples": [10, 20, 30]},
+        "LLE": {"dim_reduction_after": [True, False], "eps": [0.001, 0.01, 0.1], "min_samples": [5, 10, 15]},
+        "EigenMaps": {"dim_reduction_after": [True, False], "eps": [0.0001, 0.0007, 0.01], "min_samples": [2, 5, 8]}
     },
     "Hierarchical": {
-        "PCA": {"n_clusters": 3},
-        "CMDS": {"n_clusters": 3},
-        "ISO": {"n_clusters": 3},
-        "LLE": {"n_clusters": 3},
-        "EigenMaps": {"n_clusters": 3}
+        "PCA": {"dim_reduction_after": [True, False], "n_clusters": range(2, 5), "n_neighbors": [30, 50, 70]},
+        "CMDS": {"dim_reduction_after": [True, False], "n_clusters": range(2, 5), "n_neighbors": [30, 50, 70]},
+        "ISO": {"dim_reduction_after": [True, False], "n_clusters": range(2, 5), "n_neighbors": [30, 50, 70]},
+        "LLE": {"dim_reduction_after": [True, False], "n_clusters": range(2, 5), "n_neighbors": [30, 50, 70]},
+        "EigenMaps": {"dim_reduction_after": [True, False], "n_clusters": range(2, 5), "n_neighbors": [30, 50, 70]}
     },
     "KMeans": {
-        "PCA": {"dim_reduction_after": [True, False], "n_clusters": range(2, 5), "n_init": range(3, 6)},
-        "CMDS": {"n_clusters": 3, "n_init": 4},
-        "ISO": {"n_clusters": 3, "n_init": 4},
-        "LLE": {"n_clusters": 3, "n_init": 4},
-        "EigenMaps": {"n_clusters": 3, "n_init": 4}
+        "PCA": {"dim_reduction_after": [True, False], "n_clusters": range(2, 5), "max_iter": [100, 150, 200]
+            , "n_neighbors": [30, 50, 70]},
+        "CMDS": {"dim_reduction_after": [True, False], "n_clusters": range(2, 5), "max_iter": [100, 150, 200]
+            , "n_neighbors": [30, 50, 70]},
+        "ISO": {"dim_reduction_after": [True, False], "n_clusters": range(2, 5), "max_iter": [100, 150, 200]
+            , "n_neighbors": [30, 50, 70]},
+        "LLE": {"dim_reduction_after": [True, False], "n_clusters": range(2, 5), "max_iter": [100, 150, 200]
+            , "n_neighbors": [30, 50, 70]},
+        "EigenMaps": {"dim_reduction_after": [True, False], "n_clusters": range(2, 5), "max_iter": [100, 150, 200]
+            , "n_neighbors": [30, 50, 70]}
     }
 }
 
@@ -65,7 +70,7 @@ def load_data(num_records_per_class=200):
     return data_df, classes
 
 
-def dim_reduction(x, alg_type, n_components=2, k=5):
+def dim_reduction(x, alg_type, hyper_params_config, n_components=2):
     if alg_type == "PCA":
         x = StandardScaler().fit_transform(x)  # normalizing the features
         model = PCA(n_components=n_components)
@@ -74,13 +79,13 @@ def dim_reduction(x, alg_type, n_components=2, k=5):
         model = MDS(n_components=n_components)
         transformed_data = model.fit_transform(x)
     elif alg_type == "ISO":
-        model = Isomap(n_neighbors=k, n_components=n_components)
+        model = Isomap(n_neighbors=hyper_params_config["n_neighbors"], n_components=n_components)
         transformed_data = model.fit_transform(x)
     elif alg_type == "LLE":
-        model = LocallyLinearEmbedding(n_neighbors=k, n_components=n_components)
+        model = LocallyLinearEmbedding(n_neighbors=hyper_params_config["n_neighbors"], n_components=n_components)
         transformed_data = model.fit_transform(x)
     elif alg_type == "EigenMaps":
-        model = SpectralEmbedding(n_neighbors=k, n_components=n_components)
+        model = SpectralEmbedding(n_neighbors=hyper_params_config["n_neighbors"], n_components=n_components)
         transformed_data = model.fit_transform(x)
     else:
         raise Exception("unrecognized algorithm type")
@@ -91,23 +96,20 @@ def dim_reduction(x, alg_type, n_components=2, k=5):
     return transformed_data_df
 
 
-def apply_clustering(x, alg_type, combo_config):
-    model_metadata = {}
-
+def apply_clustering(x, alg_type, hyper_params_config):
     if alg_type == "KMeans":
-        model = KMeans(init="k-means++", n_clusters=combo_config["n_clusters"], n_init=combo_config["n_init"])
-        new_labels = model.fit_predict(x)
-        model_metadata["cluster_centers"] = model.cluster_centers_
+        model = KMeans(init="k-means++", n_clusters=hyper_params_config["n_clusters"]
+                       , max_iter=hyper_params_config["max_iter"])
     elif alg_type == "Hierarchical":
-        model = AgglomerativeClustering(n_clusters=combo_config["n_clusters"])
-        new_labels = model.fit_predict(x)
+        model = AgglomerativeClustering(n_clusters=hyper_params_config["n_clusters"])
     elif alg_type == "DBSCAN":
-        model = DBSCAN(eps=combo_config["eps"], min_samples=combo_config["min_samples"])
-        new_labels = model.fit_predict(x)
+        model = DBSCAN(eps=hyper_params_config["eps"], min_samples=hyper_params_config["min_samples"])
     else:
         raise Exception("no such clustering algorithm")
 
-    return new_labels, model_metadata
+    new_labels = model.fit_predict(x)
+
+    return new_labels
 
 
 def visualize(data_df, target_names, label_data, title=f"alg_type on dataset_name", out=""):
@@ -131,75 +133,70 @@ def visualize(data_df, target_names, label_data, title=f"alg_type on dataset_nam
     plt.close()
 
 
-def run_single_algo(data, alg_type, clstr_type, combo_config, k=50):
+def run_single_algo(data, alg_type, clstr_type, hyper_params_config):
     x = data.loc[:, data.columns[:- 1]].values
 
-    if combo_config["dim_reduction_after"]:
-        new_labels, model_metadata = apply_clustering(x, clstr_type, combo_config)
-        reduced_data = dim_reduction(x, alg_type, k=k)
+    if hyper_params_config["dim_reduction_after"]:
+        new_labels = apply_clustering(x, clstr_type, hyper_params_config)
+        reduced_data = dim_reduction(x, alg_type, hyper_params_config)
     else:
-        reduced_data = dim_reduction(x, alg_type, k=k)
-        new_labels, model_metadata = apply_clustering(reduced_data.values, clstr_type, combo_config)
-    return x, reduced_data, new_labels, model_metadata
+        reduced_data = dim_reduction(x, alg_type, hyper_params_config)
+        new_labels = apply_clustering(reduced_data.values, clstr_type, hyper_params_config)
+    return x, reduced_data, new_labels
 
 
-def PCA_KMeans_silhouette_score_results():
-    data, _ = load_data(num_records_per_class=240)
-    train, test = train_test_split(data, test_size=0.2)
-    alg_type = "PCA"
-    clstr_alg = "KMeans"
-    combo_config_ranges = algo_types_clustering_params[clstr_alg][alg_type]
+def run_all_hyper_parameters_combos(alg_type, clstr_alg, combo_config_keys, data, hyper_parameters_config_options):
+    current_algo_reduc_hyper_params_results = {}
+    for hyper_parameters_config in hyper_parameters_config_options:
+        combo_config = {}
+        for config_key_index in range(len(combo_config_keys)):
+            combo_config[combo_config_keys[config_key_index]] = hyper_parameters_config[config_key_index]
 
-    all_hyper_params_results = {}
+        x, reduced_data, n_labels = run_single_algo(data, alg_type, clstr_alg, combo_config)
 
-    for dim_red_after in combo_config_ranges["dim_reduction_after"]:
-        for n_clusters in combo_config_ranges["n_clusters"]:
-            for n_init in combo_config_ranges["n_init"]:
-                combo_config = {
-                    "dim_reduction_after": dim_red_after,
-                    "n_clusters": n_clusters,
-                    "n_init": n_init
-                }
+        s_score = silhouette_score(x, n_labels)
+        mi_score = mutual_info_score(data['label'], n_labels)
 
-                x, reduced_data, n_labels, model_metadata = run_single_algo(train, alg_type, clstr_alg, combo_config, 50)
-
-                s_score = silhouette_score(x, n_labels)
-                if dim_red_after:
-                    loss = kmeans_loss(x, model_metadata["cluster_centers"], n_labels)
-                else:
-                    loss = kmeans_loss(reduced_data.values, model_metadata["cluster_centers"], n_labels)
-
-                name = f"{clstr_alg}_{alg_type}_{str(combo_config)}"
-                target_names = np.unique(n_labels)
-                #visualize(reduced_data, target_names, n_labels, title=f"{name} on 5-6-9", out=f"{name}.svg")
-
-                all_hyper_params_results[(dim_red_after, n_clusters, n_init)] = (s_score, loss)
-                print(f"{name} Statistics:")
-                print(f"silhouette_score: {s_score}")
-                print(f"loss function: {loss}")
-                print()
-
-    # 1: For K-means, it is easy to see the n_init parameter has little influence. We can ignore it.
+        current_algo_reduc_hyper_params_results[tuple(hyper_parameters_config)] = (s_score, mi_score)
+    return current_algo_reduc_hyper_params_results
 
 
+def full_run():
+    full_data, target_names = load_data(num_records_per_class=250)
+    num_of_iterations_for_statistical_analysis = 10
 
+    all_iterations_results_storage = []
 
-def run_all_combinations():
-    data, target_names = load_data(num_records_per_class=200)
-    for clstr_alg in clustering_algo_types:
-        for alg_type in dimension_reduction_algo_types:
-            combo_config = algo_types_clustering_params[clstr_alg][alg_type]
+    for test_iteration in range(num_of_iterations_for_statistical_analysis):
+        data, _ = train_test_split(full_data, test_size=0.2)  # choose data for this iteration
+        all_hyper_params_results = {}
 
-            x, reduced_data, n_labels, model_metadata = run_single_algo(data, alg_type, clstr_alg, combo_config, 50)
+        for clstr_alg in clustering_algo_types:
+            all_hyper_params_results[clstr_alg] = {}
 
-            name = f"{clstr_alg}_{alg_type}"
-            visualize(reduced_data, np.unique(n_labels), n_labels, title=f"{name} on 5-6-9", out=f"{name}.svg")
+            for alg_type in dimension_reduction_algo_types:
+
+                combo_config_ranges = algo_types_clustering_params[clstr_alg][alg_type]
+                combo_config_keys = list(combo_config_ranges.keys())
+                hyper_parameters_config_options = list(itertools.product(*combo_config_ranges.values()))
+
+                current_algo_reduc_hyper_params_results =\
+                    run_all_hyper_parameters_combos(alg_type, clstr_alg, combo_config_keys
+                                                    , data, hyper_parameters_config_options)
+
+                all_hyper_params_results[clstr_alg][alg_type] = current_algo_reduc_hyper_params_results
+
+        all_iterations_results_storage.append(all_hyper_params_results)
+
+        print(test_iteration)
+        print(all_hyper_params_results)
+        print()
+
+    # With the all_iterations_results_storage, we can now run the paired and anova tests
 
 
 def main():
-    PCA_KMeans_silhouette_score_results()
-    #check_dbscan_runner()
-    #run_all_combinations()
+    full_run()
 
 
 if __name__ == '__main__':
