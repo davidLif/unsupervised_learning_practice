@@ -1,7 +1,6 @@
 import numpy as np
 # Quantitative tests
-from sklearn.metrics import mutual_info_score
-from sklearn.metrics import silhouette_score
+from sklearn.metrics import mutual_info_score, silhouette_score
 # Statistics tests
 # paired t-test
 # assumptions:
