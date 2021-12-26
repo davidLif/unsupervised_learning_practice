@@ -122,8 +122,10 @@ def find_best_config_based_on_statistic_test(quantitative_data, hyper_parameters
                 anova_failed = True
 
             data = np.array([res1, res2, res3]).transpose()
+            means_list = [np.mean(res1), np.mean(res2), np.mean(res3)]
         else:
             data = np.array([res1, res2]).transpose()
+            means_list = [np.mean(res1), np.mean(res2)]
 
         stat, pvalue = stats.ttest_rel(res1, res2)
 
@@ -137,6 +139,7 @@ def find_best_config_based_on_statistic_test(quantitative_data, hyper_parameters
         columns_names = [f"{hyper_parameters_names}={param_key}" for param_key in params_keys]
 
     df = pd.DataFrame(data, columns=columns_names)
+    df.loc['mean'] = means_list
     df.to_csv(save_path)
 
     if anova_failed:
@@ -165,7 +168,6 @@ def find_best_config_based_on_statistic_test(quantitative_data, hyper_parameters
         else:
             quantitative_score_name = quantitative_score
 
-        means_list = [np.mean(res1), np.mean(res2)]
         max_mean_list = max(means_list)
         chosen_parm_key = params_keys[means_list.index(max_mean_list)]
 
