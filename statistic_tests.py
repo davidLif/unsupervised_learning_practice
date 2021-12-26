@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import csv
 # Statistics tests
 # paired t-test
 # assumptions:
@@ -87,49 +88,82 @@ def apply_anova_test(data, labels, alg1, alg2, alg3, quantitative_test):
 
 
 def find_topk(all_res, k):
-    best_idxs = np.argsort(list(map(lambda x: np.mean([-10 if item is None else item for item in x]), all_res)))[::-1][:k]
+    best_idxs = np.argsort(list(map(lambda x: np.mean([-100000 if item is None else item for item in x]), all_res)))[::-1][:k]
     best_res = np.array(all_res)[best_idxs]
     return best_res, best_idxs
 
 
-def find_best_config_based_on_statistic_test(quantiative_data, quantitative_score="s_score", save_path="", use_anova=False):
-    """
+def find_best_config_based_on_statistic_test(quantitative_data, hyper_parameters_names
+                                             , quantitative_score="s_score", save_path=""
+                                             , best_k_to_save=2):
+    params_keys = list(quantitative_data.keys())
 
-    :param quantiative_data:
-    :param quantitative_score:
-    :param save_path:
-    :return: key of best config
-    """
-    params_keys = list(quantiative_data.keys())
-    all_res = [quantiative_data[key][quantitative_score] for key in params_keys]
-    if len(quantiative_data.keys()) > 2:
-        k = 2
-        if use_anova:
-            k = 3
-        best_res, best_idxs = find_topk(all_res, k)
-        res1, res2 = [-10 if item is None else item for item in best_res[0]], [-10 if item is None else item for item in best_res[1]]
+    comparing_scores = [quantitative_data[key][quantitative_score] for key in params_keys]
+    if len(quantitative_data.keys()) > 2:
+        best_res, best_idxs = find_topk(comparing_scores, best_k_to_save)
+        if best_k_to_save > 2:
+            res1, res2, res3 = [-100000 if item is None else item for item in best_res[0]] \
+                , [-100000 if item is None else item for item in best_res[1]]\
+                , [-100000 if item is None else item for item in best_res[2]]
+        else:
+            res1, res2 = [-100000 if item is None else item for item in best_res[0]]\
+                , [-100000 if item is None else item for item in best_res[1]]
         params_keys = list(np.array(params_keys)[best_idxs])
     else:
-        res1, res2 = all_res[0], all_res[1]
+        res1, res2 = comparing_scores[0], comparing_scores[1]
+
+    anova_failed = False
+    anova_pvalue = -1
     try:
-        if use_anova:
-            res1, res2, res3 = best_res[0], best_res[1], best_res[2]
-            stat, pvalue = stats.f_oneway(res1, res2, res3)
+        if best_k_to_save > 2 and len(quantitative_data.keys()) > 2:
+            stat, anova_pvalue = stats.f_oneway(res1, res2, res3)
+
+            if anova_pvalue > 0.05:
+                anova_failed = True
+
             data = np.array([res1, res2, res3]).transpose()
         else:
-            stat, pvalue = stats.ttest_rel(res1, res2)
             data = np.array([res1, res2]).transpose()
-    except:
-        print()
-    df = pd.DataFrame(data, columns=params_keys)
-    df.loc["stats score"] = stat
-    df.loc["p value"] = pvalue
+
+        stat, pvalue = stats.ttest_rel(res1, res2)
+
+    except Exception as e:
+        print("Exception on t-test/anova")
+        raise e
+
+    if hyper_parameters_names is None:
+        columns_names = params_keys
+    else:
+        columns_names =  [f"{hyper_parameters_names}={param_key}" for param_key in params_keys]
+
+    df = pd.DataFrame(data, columns=columns_names)
     df.to_csv(save_path)
-    if pvalue > 0.05:
+
+    if anova_failed:
+        print("null hypothesis of anova accepted - cannot claim distinguishability. Will take the first option")
+
+        with open(save_path, 'a') as f:
+            # create the csv writer
+            writer = csv.writer(f)
+            writer.writerow("")
+            writer.writerow(["Null hypothesis of anova accepted with pvalue", anova_pvalue])
+    elif pvalue > 0.05:
         print("null hypothesis of paired ttest accepted - take first config")
+
+        with open(save_path, 'a') as f:
+            # create the csv writer
+            writer = csv.writer(f)
+            writer.writerow("")
+            writer.writerow(["Null hypothesis of t-test accepted with pvalue", pvalue])
+
         return params_keys[0]
     else:
-        mean1, mean2 = np.mean(res1), np.mean(res2)
-        if mean1 > mean2:
-            return params_keys[0]
-        return params_keys[1]
+        with open(save_path, 'a') as f:
+            # create the csv writer
+            writer = csv.writer(f)
+            writer.writerow("")
+            writer.writerow([f"Max {quantitative_score} score", stat])
+            writer.writerow(["t-test p-value score", pvalue])
+
+        means_list = [np.mean(res1), np.mean(res2)]
+        return params_keys[means_list.index(max(means_list))]

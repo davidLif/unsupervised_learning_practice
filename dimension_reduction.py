@@ -145,24 +145,6 @@ def run_single_algo(data, alg_type, clstr_type, hyper_params_config):
     return reduced_data, new_labels
 
 
-def run_all_hyper_parameters_combos(alg_type, clstr_alg, combo_config_keys, data, hyper_parameters_config_options):
-    current_algo_reduc_hyper_params_results = {}
-    for hyper_parameters_config in hyper_parameters_config_options:
-        combo_config = {}
-        for config_key_index in range(len(combo_config_keys)):
-            combo_config[combo_config_keys[config_key_index]] = hyper_parameters_config[config_key_index]
-
-        x = data.loc[:, data.columns[:- 1]].values
-        reduced_data, n_labels = run_single_algo(x, alg_type, clstr_alg, combo_config)
-        if len(np.unique(n_labels)) > 1:
-            s_score = silhouette_score(x, n_labels)
-        else:
-            s_score = None
-        mi_score = mutual_info_score(data['label'], n_labels)
-        current_algo_reduc_hyper_params_results[tuple(hyper_parameters_config)] = (s_score, mi_score)
-    return current_algo_reduc_hyper_params_results
-
-
 def run_on_data_subsets(alg_type, clstr_alg, data_subsets, combo_config):
     s_scores, mi_scores = [], []
     for data in tqdm(data_subsets):
@@ -223,27 +205,35 @@ def full_run(quantiative_data_p="quantiative_data.json", best_quantiative_data_p
             print(all_hyper_params_results)
 
     # check hyper params per clstr-dim redc configuration
+    if not os.path.exists("stats"):
+        os.mkdir("stats")
+
     for clstr, values in all_hyper_params_results.items():
         for dim_rdc, sub_values in values.items():
             quantiative_data = sub_values
+            hyper_parameters_names = str(list(algo_types_clustering_params[clstr][dim_rdc]))
             save_path = f"stats/{clstr}_{dim_rdc}_hyperparam.csv"
-            best_key = find_best_config_based_on_statistic_test(quantiative_data, quantitative_score="s_score",
-                                                     save_path=save_path)
+            best_key = find_best_config_based_on_statistic_test(quantiative_data, hyper_parameters_names
+                                                                , quantitative_score="s_score"
+                                                                , save_path=save_path)
             all_hyper_params_results[clstr][dim_rdc] = sub_values[best_key]
             print(f"hyper param: {best_key}")
 
-         # check dim reduction algorithm per clstr
+        # check dim reduction algorithm per clstr
         save_path = f"stats/{clstr}_dim_reduction_cmp_mi.csv"
         quantiative_data = values
-        best_key = find_best_config_based_on_statistic_test(quantiative_data, quantitative_score="mi_score",
-                                                            save_path=save_path)
+        best_key = find_best_config_based_on_statistic_test(quantiative_data, None
+                                                            , quantitative_score="mi_score"
+                                                            , save_path=save_path)
         all_hyper_params_results[clstr] = values[best_key]
         print(f"dim reduction: {best_key}")
 
     #compare between clstr algorithms
     save_path = f"stats/clustering_cmp.csv"
-    best_key = find_best_config_based_on_statistic_test(all_hyper_params_results, quantitative_score="mi_score",
-                                                            save_path=save_path, use_anova=True)
+    best_key = find_best_config_based_on_statistic_test(all_hyper_params_results, None
+                                                        , quantitative_score="mi_score"
+                                                        , save_path=save_path
+                                                        , best_k_to_save=3)
     print(best_key)
 
 
