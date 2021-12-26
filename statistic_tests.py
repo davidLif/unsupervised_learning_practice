@@ -158,11 +158,18 @@ def find_best_config_based_on_statistic_test(quantitative_data, hyper_parameters
 
         return params_keys[0]
     else:
+        if quantitative_score == "mi_score":
+            quantitative_score_name = "mutual_info_score"
+        elif quantitative_score == "s_score":
+            quantitative_score_name = "silhouette_score"
+        else:
+            quantitative_score_name = quantitative_score
+
         with open(save_path, 'a') as f:
             # create the csv writer
             writer = csv.writer(f)
             writer.writerow("")
-            writer.writerow([f"Max {quantitative_score} score", stat])
+            writer.writerow([f"Max mean {quantitative_score_name}", stat])
             writer.writerow(["t-test p-value score", pvalue])
 
         means_list = [np.mean(res1), np.mean(res2)]
