@@ -1,4 +1,6 @@
 import itertools
+import json
+import os
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -10,6 +12,9 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.datasets import load_digits
 from sklearn.metrics import mutual_info_score, silhouette_score
 from sklearn.model_selection import train_test_split
+from tqdm import tqdm
+
+from statistic_tests import find_best_config_based_on_statistic_test
 
 clustering_algo_types = ["KMeans", "Hierarchical", "DBSCAN"]
 dimension_reduction_algo_types = ["PCA", "CMDS", "ISO", "LLE", "EigenMaps"]
@@ -24,28 +29,26 @@ algo_types_clustering_params = {
     "DBSCAN": {
         "PCA": {"dim_reduction_after": [True, False], "eps": [0.5, 1, 1.5], "min_samples": [15, 20, 25]},
         "CMDS": {"dim_reduction_after": [True, False], "eps": [3, 4, 5], "min_samples": [7, 8, 9]},
-        "ISO": {"dim_reduction_after": [True, False], "eps": [8, 10, 12], "min_samples": [10, 20, 30]},
-        "LLE": {"dim_reduction_after": [True, False], "eps": [0.001, 0.01, 0.1], "min_samples": [5, 10, 15]},
-        "EigenMaps": {"dim_reduction_after": [True, False], "eps": [0.0001, 0.0007, 0.01], "min_samples": [2, 5, 8]}
+        "ISO": {"dim_reduction_after": [True, False], "eps": [8, 10, 12], "min_samples": [10, 20, 30],
+                "n_neighbors": [50]},
+        "LLE": {"dim_reduction_after": [True, False], "eps": [0.001, 0.01, 0.1], "min_samples": [5, 10, 15],
+                "n_neighbors": [50]},
+        "EigenMaps": {"dim_reduction_after": [True, False], "eps": [0.0001, 0.0007, 0.01], "min_samples": [2, 5, 8],
+                      "n_neighbors": [50]}
     },
     "Hierarchical": {
-        "PCA": {"dim_reduction_after": [True, False], "n_clusters": range(2, 5), "n_neighbors": [30, 50, 70]},
-        "CMDS": {"dim_reduction_after": [True, False], "n_clusters": range(2, 5), "n_neighbors": [30, 50, 70]},
-        "ISO": {"dim_reduction_after": [True, False], "n_clusters": range(2, 5), "n_neighbors": [30, 50, 70]},
-        "LLE": {"dim_reduction_after": [True, False], "n_clusters": range(2, 5), "n_neighbors": [30, 50, 70]},
-        "EigenMaps": {"dim_reduction_after": [True, False], "n_clusters": range(2, 5), "n_neighbors": [30, 50, 70]}
+        "PCA": {"dim_reduction_after": [True, False], "n_clusters": [3]},
+        "CMDS": {"dim_reduction_after": [True, False], "n_clusters": [3]},
+        "ISO": {"dim_reduction_after": [True, False], "n_clusters": [3], "n_neighbors": [50]},
+        "LLE": {"dim_reduction_after": [True, False], "n_clusters": [3], "n_neighbors": [50]},
+        "EigenMaps": {"dim_reduction_after": [True, False], "n_clusters": [3], "n_neighbors": [50]}
     },
     "KMeans": {
-        "PCA": {"dim_reduction_after": [True, False], "n_clusters": range(2, 5), "max_iter": [100, 150, 200]
-            , "n_neighbors": [30, 50, 70]},
-        "CMDS": {"dim_reduction_after": [True, False], "n_clusters": range(2, 5), "max_iter": [100, 150, 200]
-            , "n_neighbors": [30, 50, 70]},
-        "ISO": {"dim_reduction_after": [True, False], "n_clusters": range(2, 5), "max_iter": [100, 150, 200]
-            , "n_neighbors": [30, 50, 70]},
-        "LLE": {"dim_reduction_after": [True, False], "n_clusters": range(2, 5), "max_iter": [100, 150, 200]
-            , "n_neighbors": [30, 50, 70]},
-        "EigenMaps": {"dim_reduction_after": [True, False], "n_clusters": range(2, 5), "max_iter": [100, 150, 200]
-            , "n_neighbors": [30, 50, 70]}
+        "PCA": {"dim_reduction_after": [True, False], "n_clusters": [3]},
+        "CMDS": {"dim_reduction_after": [True, False], "n_clusters": [3]},
+        "ISO": {"dim_reduction_after": [True, False], "n_clusters": [3], "n_neighbors": [50]},
+        "LLE": {"dim_reduction_after": [True, False], "n_clusters": [3], "n_neighbors": [50]},
+        "EigenMaps": {"dim_reduction_after": [True, False], "n_clusters": [3], "n_neighbors": [50]}
     }
 }
 
@@ -98,8 +101,7 @@ def dim_reduction(x, alg_type, hyper_params_config, n_components=2):
 
 def apply_clustering(x, alg_type, hyper_params_config):
     if alg_type == "KMeans":
-        model = KMeans(init="k-means++", n_clusters=hyper_params_config["n_clusters"]
-                       , max_iter=hyper_params_config["max_iter"])
+        model = KMeans(init="k-means++", n_clusters=hyper_params_config["n_clusters"])
     elif alg_type == "Hierarchical":
         model = AgglomerativeClustering(n_clusters=hyper_params_config["n_clusters"])
     elif alg_type == "DBSCAN":
@@ -120,7 +122,7 @@ def visualize(data_df, target_names, label_data, title=f"alg_type on dataset_nam
     plt.ylabel('Principal Component - 2', fontsize=20)
     plt.title(title, fontsize=20)
     colors = ["red", "blue", "green", "yellow", "purple", "orange", "black", "grey", "aqua", "silver", "olive"]
-    assert len(target_names) <= len(colors)\
+    assert len(target_names) <= len(colors) \
         , f"not enough colors for num labels. num labels {len(target_names)} {title}"
     for i, (label_n, color) in enumerate(zip(target_names, colors)):
         i = target_names[i]
@@ -134,15 +136,13 @@ def visualize(data_df, target_names, label_data, title=f"alg_type on dataset_nam
 
 
 def run_single_algo(data, alg_type, clstr_type, hyper_params_config):
-    x = data.loc[:, data.columns[:- 1]].values
-
     if hyper_params_config["dim_reduction_after"]:
-        new_labels = apply_clustering(x, clstr_type, hyper_params_config)
-        reduced_data = dim_reduction(x, alg_type, hyper_params_config)
+        new_labels = apply_clustering(data, clstr_type, hyper_params_config)
+        reduced_data = dim_reduction(data, alg_type, hyper_params_config)
     else:
-        reduced_data = dim_reduction(x, alg_type, hyper_params_config)
+        reduced_data = dim_reduction(data, alg_type, hyper_params_config)
         new_labels = apply_clustering(reduced_data.values, clstr_type, hyper_params_config)
-    return x, reduced_data, new_labels
+    return reduced_data, new_labels
 
 
 def run_all_hyper_parameters_combos(alg_type, clstr_alg, combo_config_keys, data, hyper_parameters_config_options):
@@ -152,45 +152,102 @@ def run_all_hyper_parameters_combos(alg_type, clstr_alg, combo_config_keys, data
         for config_key_index in range(len(combo_config_keys)):
             combo_config[combo_config_keys[config_key_index]] = hyper_parameters_config[config_key_index]
 
-        x, reduced_data, n_labels = run_single_algo(data, alg_type, clstr_alg, combo_config)
-
-        s_score = silhouette_score(x, n_labels)
+        x = data.loc[:, data.columns[:- 1]].values
+        reduced_data, n_labels = run_single_algo(x, alg_type, clstr_alg, combo_config)
+        if len(np.unique(n_labels)) > 1:
+            s_score = silhouette_score(x, n_labels)
+        else:
+            s_score = None
         mi_score = mutual_info_score(data['label'], n_labels)
-
         current_algo_reduc_hyper_params_results[tuple(hyper_parameters_config)] = (s_score, mi_score)
     return current_algo_reduc_hyper_params_results
 
 
-def full_run():
-    full_data, target_names = load_data(num_records_per_class=250)
-    num_of_iterations_for_statistical_analysis = 10
+def run_on_data_subsets(alg_type, clstr_alg, data_subsets, combo_config):
+    s_scores, mi_scores = [], []
+    for data in tqdm(data_subsets):
+        x = data.loc[:, data.columns[:- 1]].values
+        reduced_data, n_labels = run_single_algo(x, alg_type, clstr_alg, combo_config)
+        if len(np.unique(n_labels)) > 1:
+            s_score = silhouette_score(x, n_labels)
+        else:
+            s_score = None
+        s_scores.append(s_score)
+        mi_scores.append(mutual_info_score(data['label'], n_labels))
+    return s_scores, mi_scores
 
-    all_iterations_results_storage = []
 
-    for test_iteration in range(num_of_iterations_for_statistical_analysis):
-        data, _ = train_test_split(full_data, test_size=0.2)  # choose data for this iteration
+def run_all_hyper_parameters_combos(alg_type, clstr_alg, combo_config_keys, data_subsets,
+                                    hyper_parameters_config_options):
+    current_algo_reduc_hyper_params_results = {}
+    for hyper_parameters_config in hyper_parameters_config_options:
+        combo_config = {}
+        for config_key_index in range(len(combo_config_keys)):
+            combo_config[combo_config_keys[config_key_index]] = hyper_parameters_config[config_key_index]
+        s_scores, mi_scores = run_on_data_subsets(alg_type, clstr_alg, data_subsets, combo_config)
+        current_algo_reduc_hyper_params_results[tuple(hyper_parameters_config)] = {"s_score": s_scores,
+                                                                                   "mi_score": mi_scores}
+    return current_algo_reduc_hyper_params_results
+
+
+def get_subsets(full_data, num_subsets):
+    subsets = []
+    for test_iteration in range(num_subsets):
+        data, _ = train_test_split(full_data, test_size=0.5,
+                                   random_state=test_iteration)  # choose data for this iteration
+        subsets.append(data)
+    return subsets
+
+
+def full_run(quantiative_data_p="quantiative_data.json", best_quantiative_data_p="quantiative_data.json"):
+    if os.path.exists(quantiative_data_p):
+        with open(quantiative_data_p, "r") as f:
+            all_hyper_params_results = json.load(f)
+    else:
+        full_data, target_names = load_data(num_records_per_class=250)
+        num_of_iterations_for_statistical_analysis = 10
+        data_subsets = get_subsets(full_data, num_of_iterations_for_statistical_analysis)
         all_hyper_params_results = {}
-
-        for clstr_alg in clustering_algo_types:
+        for clstr_alg in tqdm(clustering_algo_types):
             all_hyper_params_results[clstr_alg] = {}
-
             for alg_type in dimension_reduction_algo_types:
-
                 combo_config_ranges = algo_types_clustering_params[clstr_alg][alg_type]
                 combo_config_keys = list(combo_config_ranges.keys())
                 hyper_parameters_config_options = list(itertools.product(*combo_config_ranges.values()))
-
-                current_algo_reduc_hyper_params_results =\
+                current_algo_reduc_hyper_params_results = \
                     run_all_hyper_parameters_combos(alg_type, clstr_alg, combo_config_keys
-                                                    , data, hyper_parameters_config_options)
+                                                    , data_subsets, hyper_parameters_config_options)
 
                 all_hyper_params_results[clstr_alg][alg_type] = current_algo_reduc_hyper_params_results
 
-        all_iterations_results_storage.append(all_hyper_params_results)
+            print(all_hyper_params_results)
 
-        print(test_iteration)
-        print(all_hyper_params_results)
-        print()
+    # check hyper params per clstr-dim redc configuration
+    for clstr, values in all_hyper_params_results.items():
+        for dim_rdc, sub_values in values.items():
+            quantiative_data = sub_values
+            save_path = f"stats/{clstr}_{dim_rdc}_hyperparam.csv"
+            best_key = find_best_config_based_on_statistic_test(quantiative_data, quantitative_score="s_score",
+                                                     save_path=save_path)
+            all_hyper_params_results[clstr][dim_rdc] = sub_values[best_key]
+            print(f"hyper param: {best_key}")
+
+         # check dim reduction algorithm per clstr
+        save_path = f"stats/{clstr}_dim_reduction_cmp_mi.csv"
+        quantiative_data = values
+        best_key = find_best_config_based_on_statistic_test(quantiative_data, quantitative_score="mi_score",
+                                                            save_path=save_path)
+        all_hyper_params_results[clstr] = values[best_key]
+        print(f"dim reduction: {best_key}")
+
+    #compare between clstr algorithms
+    save_path = f"stats/clustering_cmp.csv"
+    best_key = find_best_config_based_on_statistic_test(all_hyper_params_results, quantitative_score="mi_score",
+                                                            save_path=save_path, use_anova=True)
+    print(best_key)
+
+
+
 
     # With the all_iterations_results_storage, we can now run the paired and anova tests
 
