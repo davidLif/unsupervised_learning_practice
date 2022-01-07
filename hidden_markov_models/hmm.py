@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from hmmlearn import hmm  # pip install --upgrade --user hmmlearn
 from sklearn.manifold import MDS
+import random
 
 
 def fitHMM(Q, n_states=2):
@@ -42,7 +43,7 @@ def plotTimeSeries(Q, hidden_states, ylabel, filename):
 def visualize_data(df, hidden_states_options, file_name):
     plt.figure(figsize=(18, 9))
     plt.plot(range(df.shape[0]), (df['principle_cmp1']))
-    plt.xticks(range(0, df.shape[0], 500), df['Date_delta'].loc[::500], rotation=45)
+    plt.xticks(range(0, df.shape[0], 10), df['Date_delta'].loc[::10], rotation=45)
 
     colors_array = ["red", "blue", "green", "yellow", "purple", "orange", "black", "grey", "aqua"
         , "silver", "olive", "pink", "darkseagreen"]
@@ -65,23 +66,27 @@ def main():
     df['Date_delta'] = (df['Date'] - df['Date'].min()) / np.timedelta64(1, 'D')
     df = df.drop(columns=['Date'])
 
-    # Dim reduction to
-    df = df.sample(3000)  # My computer doesn't have enough RAM for more than that.
+    # Dim reduction to 1
+    random_start_visualize = random.randint(0, df.shape[0] - 3000)
+    df = df[random_start_visualize: random_start_visualize + 3000]  # My computer doesn't have enough RAM for more than that.
     model = MDS(n_components=1)
     transformed_data = model.fit_transform(df[['Open', 'High', 'Low', 'Close']])
     transformed_data_df = pd.DataFrame(data=transformed_data
                                        , columns=['principle_cmp1'])
-    transformed_data_df['Date_delta'] = df['Date_delta']
+    transformed_data_df['Date_delta'] = df['Date_delta'].values
     transformed_data_df['hidden_states'] = 1
 
-    for n_states in [13]:
+    # All examples should visualize the same section
+    random_start_visualize = random.randint(0, transformed_data_df.shape[0] - 800)
+
+    for n_states in range(2, 13):
         transformed_data_df.drop(columns=['hidden_states'])
         hidden_states = fitHMM(df, n_states)
 
         transformed_data_df['hidden_states'] = hidden_states
 
         #plt.switch_backend('agg')  # turn off display when running with Cygwin
-        samples = transformed_data_df.sample(200)
+        samples = transformed_data_df[random_start_visualize: random_start_visualize + 1000: 5]
         visualize_data(samples, range(n_states), "graph_with_dm_{0}_hidden_states.svg".format(n_states))
 
 
