@@ -205,8 +205,8 @@ def full_run(quantiative_data_p="quantiative_data.json", best_quantiative_data_p
             print(all_hyper_params_results)
 
     # check hyper params per clstr-dim redc configuration
-    if not os.path.exists("../stats"):
-        os.mkdir("../stats")
+    if not os.path.exists("stats"):
+        os.mkdir("stats")
 
     for clstr, values in all_hyper_params_results.items():
         for dim_rdc, sub_values in values.items():
@@ -229,7 +229,7 @@ def full_run(quantiative_data_p="quantiative_data.json", best_quantiative_data_p
         print(f"dim reduction: {best_key}")
 
     #compare between clstr algorithms
-    save_path = f"../stats/clustering_cmp.csv"
+    save_path = f"stats/clustering_cmp.csv"
     best_key = find_best_config_based_on_statistic_test(all_hyper_params_results, None
                                                         , quantitative_score="mi_score"
                                                         , save_path=save_path
