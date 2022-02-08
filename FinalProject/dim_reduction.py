@@ -4,7 +4,7 @@ from sklearn.manifold import MDS, LocallyLinearEmbedding, Isomap, SpectralEmbedd
 from sklearn.preprocessing import StandardScaler
 
 
-def dim_reduction(x, alg_type, hyper_params_config, n_components=2):
+def apply_dim_reduction(x, alg_type, hyper_params_config, n_components=2):
     if alg_type == "PCA":
         x = StandardScaler().fit_transform(x)  # normalizing the features
         model = PCA(n_components=n_components)
@@ -27,5 +27,5 @@ def dim_reduction(x, alg_type, hyper_params_config, n_components=2):
     transformed_data_df = pd.DataFrame(data=transformed_data
                                        , columns=['principle_cmp1', 'principle_cmp2'])
 
-    return transformed_data_df
+    return transformed_data_df, model
 
