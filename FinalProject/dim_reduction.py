@@ -3,6 +3,8 @@ from sklearn.decomposition import PCA
 from sklearn.manifold import MDS, LocallyLinearEmbedding, Isomap, SpectralEmbedding
 from sklearn.preprocessing import StandardScaler
 
+dim_reduction_algs = ["PCA", "CMDS", "ISO", "LLE", "EigenMaps"]
+
 
 def apply_dim_reduction(x, alg_type, hyper_params_config, n_components=2):
     if alg_type == "PCA":

@@ -2,17 +2,8 @@ import time
 
 from sklearn.cluster import KMeans, DBSCAN, AgglomerativeClustering
 from sklearn.mixture import GaussianMixture
-# !pip install kmodes
 from kmodes.kmodes import KModes
 
-n_clusters = [2, 3, 4, 5, 6, 7, 8]
-# algo_types_clustering_params = {
-#     "DBSCAN": {"eps": [0.1, 0.25, 0.5], "min_samples": [1, 5, 10]},
-#     "Hierarchical": {"n_clusters": n_clusters},
-#     "KMeans": {"n_clusters": n_clusters},
-#     "KModes": {"n_clusters": n_clusters},
-#     "GaussianMixture": {"n_components": n_clusters}
-# }
 n_clusters = [2, 5]
 algo_types_clustering_params = {
     "DBSCAN": {"eps": [10, 0.1], "min_samples": [100, 10]},
@@ -21,6 +12,7 @@ algo_types_clustering_params = {
     "KModes": {"n_clusters": n_clusters},
     "GaussianMixture": {"n_components": n_clusters}
 }
+clustering_algs = list(algo_types_clustering_params.keys())
 
 
 def apply_clustering(x, alg_type, hyper_params_config):
@@ -39,9 +31,10 @@ def apply_clustering(x, alg_type, hyper_params_config):
 
     s = time.time()
     new_labels = model.fit_predict(x)
-    print(time.time()-s)
+    print("Clustering model {model} training seconds: {time}".format(model=alg_type, time=time.time()-s))
     return new_labels, model
 
 
 def train_eval_pipeline(data, model_name):
-    algo_types_clustering_params[model_name]
+    pass  # TODO
+    # algo_types_clustering_params[model_name]

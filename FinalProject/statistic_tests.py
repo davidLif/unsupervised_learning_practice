@@ -4,16 +4,9 @@ import csv
 from scipy import stats
 
 
-def get_subsets(data, labels, n_subsets=50):
-    # todo needs to be implemented
-    # returns list of subsets and list of corresponded labels for each subset
-    subsets, subsets_labels = [data], [labels]
-    return subsets, subsets_labels
-
-
 def extract_results_per_subsets(data, labels, algs_list, quantitative_test):
     results = {}
-    subsets, parted_labels = get_subsets(data, labels)
+    subsets, parted_labels = [data], [labels]  # no real subsets for now
     for alg in algs_list:
         alg_res = []
         for subset, sub_lbls in zip(subsets, parted_labels):
