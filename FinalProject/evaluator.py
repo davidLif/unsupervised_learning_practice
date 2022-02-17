@@ -1,14 +1,14 @@
 import itertools
 
 import numpy as np
+import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import silhouette_score, silhouette_samples, mutual_info_score
 from tqdm import tqdm
 
-from anomaly_detection import anomaly_detect_algs, apply_anomaly_detection
+from anomaly_detection import anomaly_detect_algs, apply_anomaly_detection, algo_types_anomaly_params
 from dim_reduction import dim_reduction_algs, apply_dim_reduction
 from clustering import algo_types_clustering_params, clustering_algs, apply_clustering
-from pre_processing import *
 from statistic_tests import StatTester
 
 # TODO: move later to globals
@@ -33,7 +33,7 @@ class Evaluator:
             self.params_config = {}
         elif algs_type == "anomaly_detect":
             self.algs = anomaly_detect_algs
-            self.params_config = {}
+            self.params_config = algo_types_anomaly_params
         else:
             raise Exception("unknown algs type")
         self.statistic_tester = StatTester()
@@ -58,7 +58,7 @@ class Evaluator:
             train_subset, test_subset = train_test_split(part_data, test_size=0.2,
                                                          random_state=test_iteration)  # choose data for this iteration
             tags.append((train_subset[external_variables], test_subset[external_variables]))
-            drop_cols = ["caseid"] + external_variables
+            drop_cols = external_variables # ["caseid"] +
             subsets.append((train_subset.drop(columns=drop_cols), test_subset.drop(columns=drop_cols)))
         return subsets, tags
 
