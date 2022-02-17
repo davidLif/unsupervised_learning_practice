@@ -32,9 +32,9 @@ def run_all_hyper_parameters_combos(data, alg, algs_type, hyper_params_config_ke
 def run_single_algo(data, alg, alg_type, hyper_params_config):
     if alg_type == "clustering":
         results, model = apply_clustering(data, alg, hyper_params_config)
-    elif alg_type == "dim_reduction":
+    elif alg_type == "dimReduction":
         results, model = apply_dim_reduction(data, alg, hyper_params_config)
-    elif alg_type == "anomaly_detect":
+    elif alg_type == "anomalyDetect":
         results, model = apply_anomaly_detection(data, alg, hyper_params_config)
     else:
         raise Exception("unKnown alg type")
@@ -46,10 +46,10 @@ def get_algos_and_params():
     if algs_type == "clustering":
         algs = clustering_algs
         params_config = algo_types_clustering_params
-    elif algs_type == "dim_reduction":
+    elif algs_type == "dimReduction":
         algs = dim_reduction_algs
         params_config = {}
-    elif algs_type == "anomaly_detect":
+    elif algs_type == "anomalyDetect":
         algs = anomaly_detect_algs
         params_config = algo_types_anomaly_params
     else:
@@ -58,7 +58,7 @@ def get_algos_and_params():
 
 
 if __name__ == "__main__":
-    algs_type = "anomaly_detect"
+    algs_type = "anomalyDetect"
     distance_data_file_path = "./DATA/USCensus1990.distance_data.csv"
 
     data = load_data(distance_data_file_path)

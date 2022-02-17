@@ -14,9 +14,9 @@ def load_data():
 def convert_data_to_distances_matrix(data_df):
     data_df_no_unnamed = data_df.drop(columns="Unnamed: 0")
     data_df_no_unnamed = data_df_no_unnamed.drop(columns=external_variables)
-    jac_sim = 1 - pairwise_distances(data_df_no_unnamed, metric="hamming")
-    jac_sim = pd.DataFrame(jac_sim, index=data_df["Unnamed: 0"], columns=data_df["Unnamed: 0"])
-    jac_sim.to_csv("./DATA/USCensus1990.distance_data.csv")
+    distances_df = pairwise_distances(data_df_no_unnamed, metric="hamming")
+    distances_df = pd.DataFrame(distances_df, index=data_df["Unnamed: 0"], columns=data_df["Unnamed: 0"])
+    distances_df.to_csv("./DATA/USCensus1990.distance_data.csv")
 
 
 if __name__ == "__main__":

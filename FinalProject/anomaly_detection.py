@@ -4,7 +4,7 @@ from sklearn.cluster import DBSCAN
 
 anomaly_detect_algs = ["DBSCAN"]
 algo_types_anomaly_params = {
-    "DBSCAN": {"eps": [0.2, 0.3, 0.4, 0.5], "min_samples": [2, 4, 5]}
+    "DBSCAN": {"eps": [0.1, 0.2, 0.3], "min_samples": [2, 4, 5]}
 }
 # 5 diff methods:
 # 1- Statistical model (Example: MAD)
