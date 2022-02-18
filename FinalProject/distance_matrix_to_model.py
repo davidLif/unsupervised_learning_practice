@@ -22,8 +22,10 @@ def run_all_hyper_parameters_combos(data, alg, algs_type, hyper_params_config_ke
         n_labels, model = run_single_algo(data, alg, algs_type, combo_config)
 
         param_name_part = str(list(combo_config.values())).replace(", ", "_").replace("[", "").replace("]", "")
-        model_file_name = "./MODELS/{0}_{1}_{2}.model".format(algs_type, alg, param_name_part)
-        joblib.dump(model, model_file_name)  # save model to file
+
+        if model is not None:
+            model_file_name = "./MODELS/{0}_{1}_{2}.model".format(algs_type, alg, param_name_part)
+            joblib.dump(model, model_file_name)  # save model to file
 
         labeling_to_index = pd.DataFrame(n_labels, index=data.index, columns=["cluster-labeling"])
         labeling_to_index.to_csv("./LABELS/labels.{0}_{1}_{2}.csv".format(algs_type, alg, param_name_part))
@@ -74,4 +76,5 @@ if __name__ == "__main__":
         hyper_params_config = params_config[alg_name]
         hyper_params_config_keys = list(hyper_params_config.keys())
         hyper_parameters_config_options = list(itertools.product(*hyper_params_config.values()))
-        run_all_hyper_parameters_combos(data, alg_name, algs_type, hyper_params_config_keys, hyper_parameters_config_options)
+        run_all_hyper_parameters_combos(data, alg_name, algs_type, hyper_params_config_keys,
+                                        hyper_parameters_config_options)
