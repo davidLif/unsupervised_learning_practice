@@ -1,6 +1,7 @@
 import itertools
 
 import numpy as np
+import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import silhouette_score, silhouette_samples, mutual_info_score
 from tqdm import tqdm
@@ -8,7 +9,6 @@ from tqdm import tqdm
 from anomaly_detection import anomaly_detect_algs, apply_anomaly_detection
 from dim_reduction import dim_reduction_algs, apply_dim_reduction
 from clustering import algo_types_clustering_params, clustering_algs, apply_clustering
-from pre_processing import *
 from statistic_tests import StatTester
 
 # TODO: move later to globals
@@ -58,7 +58,7 @@ class Evaluator:
             train_subset, test_subset = train_test_split(part_data, test_size=0.2,
                                                          random_state=test_iteration)  # choose data for this iteration
             tags.append((train_subset[external_variables], test_subset[external_variables]))
-            drop_cols = ["caseid"] + external_variables
+            drop_cols = external_variables
             subsets.append((train_subset.drop(columns=drop_cols), test_subset.drop(columns=drop_cols)))
         return subsets, tags
 
@@ -105,7 +105,7 @@ class Evaluator:
                 print(e)
                 return -100000
         else:
-            raise Exception("unknown score metjod")
+            raise Exception("unknown score method")
 
     def extract_scores(self, alg, combo_config, scores_to_extract=[]):
         scores = {score_m: [] for score_m in scores_to_extract}
