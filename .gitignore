@@ -137,3 +137,6 @@ dmypy.json
 
 # Do not save original data - too large
 FinalProject/DATA/*
+FinalProject/LABELS/*
+FinalProject/MODELS/*
+FinalProject/SCORES/*

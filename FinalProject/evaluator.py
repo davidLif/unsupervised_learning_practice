@@ -6,7 +6,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import silhouette_score, silhouette_samples, mutual_info_score
 from tqdm import tqdm
 
-from anomaly_detection import anomaly_detect_algs, apply_anomaly_detection
+from anomaly_detection import anomaly_detect_algs, apply_anomaly_detection, algo_types_anomaly_params
 from dim_reduction import dim_reduction_algs, apply_dim_reduction
 from clustering import algo_types_clustering_params, clustering_algs, apply_clustering
 from statistic_tests import StatTester
@@ -33,7 +33,7 @@ class Evaluator:
             self.params_config = {}
         elif algs_type == "anomaly_detect":
             self.algs = anomaly_detect_algs
-            self.params_config = {}
+            self.params_config = algo_types_anomaly_params
         else:
             raise Exception("unknown algs type")
         self.statistic_tester = StatTester()

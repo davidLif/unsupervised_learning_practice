@@ -13,6 +13,7 @@ def load_data():
 
 
 if __name__ == "__main__":
+    #TODO: What is the launch folder of the project? FinalProject?
     data = load_data()
 
     # Prepare environment
