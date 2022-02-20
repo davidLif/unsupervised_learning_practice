@@ -74,14 +74,23 @@ class StatTester:
                 pass
             elif num_data_to_compare == 5:
                 stat, anova_pvalue = stats.f_oneway(best_res[0], best_res[1], best_res[2], best_res[3], best_res[4])
+            elif num_data_to_compare == 6:
+                stat, anova_pvalue = stats.f_oneway(best_res[0], best_res[1], best_res[2], best_res[3], best_res[4], best_res[5])
             elif num_data_to_compare == 7:
                 stat, anova_pvalue = stats.f_oneway(best_res[0], best_res[1], best_res[2], best_res[3], \
                                                     best_res[4], best_res[5], best_res[6])
                 pass
+            elif num_data_to_compare == 8:
+                stat, anova_pvalue = stats.f_oneway(best_res[0], best_res[1], best_res[2], best_res[3], \
+                                                    best_res[4], best_res[5], best_res[6], best_res[7])
             elif num_data_to_compare == 9:
                 stat, anova_pvalue = stats.f_oneway(best_res[0], best_res[1], best_res[2], best_res[3], \
                                                     best_res[4], best_res[5], best_res[6], best_res[7], \
                                                     best_res[8])
+            elif num_data_to_compare == 12:
+                stat, anova_pvalue = stats.f_oneway(best_res[0], best_res[1], best_res[2], best_res[3], \
+                                                    best_res[4], best_res[5], best_res[6], best_res[7], \
+                                                    best_res[8], best_res[9], best_res[10], best_res[11])
                 pass
             else:
                 raise Exception(f"{num_data_to_compare}, this option doesnt exist")
