@@ -16,9 +16,8 @@ n_clusters = [2, 5, 10]
 distance_metrics = ["hamming", "jaccard"]
 algo_types_clustering_params = {
     "DBSCAN": {"eps": [10, 0.1], "min_samples": [100, 10], "distance": distance_metrics},
-    "Hierarchical": {"n_clusters": n_clusters, "linkage": ['average', 'single'],
-                     "distance": distance_metrics},
-    "KMeans": {"n_clusters": n_clusters},
+    "Hierarchical": {"n_clusters": n_clusters, "distance": distance_metrics}, #"linkage": ['average', 'single'], #
+    # "KMeans": {"n_clusters": n_clusters},
     "KModes": {"n_clusters": n_clusters}
 }
 clustering_algs = list(algo_types_clustering_params.keys())
@@ -26,7 +25,7 @@ clustering_algs = list(algo_types_clustering_params.keys())
 
 # currently returns only one or two clusters
 # doesnt work well with other distance functions such as hamming/jaccard except for euclidean
-class KMeans:
+class KMeans_:
     """
     wrapper class for kmeans that support user defined distance metric
     (instead of sklearn kmeans that only support euclidean distance)
@@ -59,13 +58,13 @@ def apply_clustering(x, alg_type, hyper_params_config):
     elif alg_type == "KModes":
         model = KModes(init="random", n_clusters=hyper_params_config["n_clusters"], n_jobs=-1)
     else:
-        x = compute_distances(x, hyper_params_config["distance"])
+        # x = compute_distances(x, hyper_params_config["distance"])
         if alg_type == "Hierarchical":
-            model = AgglomerativeClustering(n_clusters=hyper_params_config["n_clusters"], affinity='precomputed',
-                                            linkage=hyper_params_config["linkage"])
+            model = AgglomerativeClustering(n_clusters=hyper_params_config["n_clusters"]
+                                            ,affinity=hyper_params_config["distance"])#, 'precomputed',linkage=hyper_params_config["linkage"])
         elif alg_type == "DBSCAN":
             model = DBSCAN(eps=hyper_params_config["eps"], min_samples=hyper_params_config["min_samples"],
-                           metric='precomputed')
+                           metric=hyper_params_config["distance"])
         else:
             raise Exception("no such clustering algorithm")
 

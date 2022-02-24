@@ -54,7 +54,7 @@ class Evaluator:
         subsets = []
         tags = []
         for test_iteration in range(num_subsets):
-            part_data = full_data.sample(frac=0.1, random_state=test_iteration)
+            part_data = full_data.sample(frac=0.01, random_state=test_iteration)
             train_subset, test_subset = train_test_split(part_data, test_size=0.2,
                                                          random_state=test_iteration)  # choose data for this iteration
             tags.append((train_subset[external_variables], test_subset[external_variables]))
