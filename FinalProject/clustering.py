@@ -12,11 +12,11 @@ from scipy.spatial.distance import jaccard, euclidean, canberra
 
 from pre_processing import compute_distances
 
-n_clusters = [2, 5, 10]
-distance_metrics = ["hamming", "jaccard"]
+n_clusters = [2, 8, 10]
+distance_metrics = ["hamming", "jaccard"] #"gower",
 algo_types_clustering_params = {
-    "DBSCAN": {"eps": [10, 0.1], "min_samples": [100, 10], "distance": distance_metrics},
-    "Hierarchical": {"n_clusters": n_clusters, "distance": distance_metrics}, #"linkage": ['average', 'single'], #
+    # "DBSCAN": {"eps": [10, 0.1], "min_samples": [100, 10], "distance": distance_metrics},
+    "Hierarchical": {"n_clusters": n_clusters, "distance": distance_metrics, "linkage": ['average', 'single'],}, #
     # "KMeans": {"n_clusters": n_clusters},
     "KModes": {"n_clusters": n_clusters}
 }
@@ -61,7 +61,7 @@ def apply_clustering(x, alg_type, hyper_params_config):
         # x = compute_distances(x, hyper_params_config["distance"])
         if alg_type == "Hierarchical":
             model = AgglomerativeClustering(n_clusters=hyper_params_config["n_clusters"]
-                                            ,affinity=hyper_params_config["distance"])#, 'precomputed',linkage=hyper_params_config["linkage"])
+                                            ,affinity=hyper_params_config["distance"], linkage=hyper_params_config["linkage"])
         elif alg_type == "DBSCAN":
             model = DBSCAN(eps=hyper_params_config["eps"], min_samples=hyper_params_config["min_samples"],
                            metric=hyper_params_config["distance"])
