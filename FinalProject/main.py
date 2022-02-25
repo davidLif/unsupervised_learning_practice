@@ -20,4 +20,4 @@ if __name__ == "__main__":
         os.mkdir(stats_dir)
 
     clustering_evaluator = Evaluator(data, algs_type="clustering")
-    clustering_evaluator.algs_evaluation_pipeline()
+    clustering_evaluator.algs_evaluation_pipeline(save_best=True)

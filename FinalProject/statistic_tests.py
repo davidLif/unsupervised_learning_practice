@@ -59,22 +59,23 @@ class StatTester:
         best_res = np.array(comparing_scores)
         anova_pvalue = -1
         try:
-
             if num_data_to_compare == 1:
                 # stat, anova_pvalue = stats.f_oneway(best_res[0], best_res[1])
-                best_res = np.vstack((best_res, best_res))
+                self.data = np.array(best_res).transpose()
+                self.t_pvalue = 1000
                 pass
-            elif num_data_to_compare == 2:
-                # stat, anova_pvalue = stats.f_oneway(best_res[0], best_res[1])
-                pass
-            elif num_data_to_compare >= 3:
-                stat, anova_pvalue = stats.f_oneway(*best_res)
             else:
-                raise Exception(f"{num_data_to_compare}, this option doesnt exist")
-            self.data = np.array(best_res).transpose()
-            best_res, best_idxs = find_topk(best_res, 2)
-            self.top2_idxs = best_idxs
-            t_stat, self.t_pvalue = stats.ttest_rel(best_res[0], best_res[1])
+                if num_data_to_compare == 2:
+                    # stat, anova_pvalue = stats.f_oneway(best_res[0], best_res[1])
+                    pass
+                elif num_data_to_compare >= 3:
+                    stat, anova_pvalue = stats.f_oneway(*best_res)
+                else:
+                    raise Exception(f"{num_data_to_compare}, this option doesnt exist")
+                self.data = np.array(best_res).transpose()
+                best_res, best_idxs = find_topk(best_res, 2)
+                self.top2_idxs = best_idxs
+                t_stat, self.t_pvalue = stats.ttest_rel(best_res[0], best_res[1])
         except Exception as e:
             print("Exception on t-test/anova")
             raise e

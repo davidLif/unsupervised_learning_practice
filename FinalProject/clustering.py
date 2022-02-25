@@ -11,7 +11,7 @@ from pyclustering.cluster.encoder import cluster_encoder
 from scipy.spatial.distance import jaccard, euclidean, canberra
 
 from pre_processing import compute_distances
-
+RANDOM_STATE = 2022
 n_clusters = [2, 8, 10]
 distance_metrics = ["hamming", "jaccard"] #"gower",
 algo_types_clustering_params = {
@@ -51,12 +51,12 @@ class KMeans_:
 
 def apply_clustering(x, alg_type, hyper_params_config):
     if alg_type == "KMeans":
-        model = KMeans(init="k-means++", n_clusters=hyper_params_config["n_clusters"])
+        model = KMeans(init="k-means++", n_clusters=hyper_params_config["n_clusters"], random_state=RANDOM_STATE)
     elif alg_type == "kmeans_adapted_distance":
         distance_func = jaccard
         model = KMeans(x, hyper_params_config["n_clusters"], distance_func)
     elif alg_type == "KModes":
-        model = KModes(init="random", n_clusters=hyper_params_config["n_clusters"], n_jobs=-1)
+        model = KModes(init="random", n_clusters=hyper_params_config["n_clusters"], n_jobs=-1, random_state=RANDOM_STATE)
     else:
         # x = compute_distances(x, hyper_params_config["distance"])
         if alg_type == "Hierarchical":
