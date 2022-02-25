@@ -1,5 +1,7 @@
 import itertools
+import os
 
+import joblib
 import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
@@ -17,7 +19,8 @@ external_variables = ["dAge", "dHispanic", "iYearwrk", "iSex"]
 
 
 class Evaluator:
-    def __init__(self, data, num_of_iterations_for_statistical_analysis=10, eval_on_test=False, algs_type="clustering"):
+    def __init__(self, data, num_of_iterations_for_statistical_analysis=10,
+                 eval_on_test=False, algs_type="clustering", save_path=""):
         self.data = data
         self.data_subsets = None
         self.external_tags = None
@@ -38,7 +41,8 @@ class Evaluator:
             raise Exception("unknown algs type")
         self.statistic_tester = StatTester()
 
-    def run_single_algo(self, data, alg_type, hyper_params_config):
+    @staticmethod
+    def run_single_algo(data, alg_type, hyper_params_config):
         if alg_type in clustering_algs:
             results, model = apply_clustering(data, alg_type, hyper_params_config)
         elif alg_type in dim_reduction_algs:
@@ -172,3 +176,23 @@ class Evaluator:
             results, best_key = self.choose_best_external_variable(alg_name, "mi")
             self.all_hyper_params_results[alg_name] = results
         self.choose_best_alg("mi")
+
+    def save_best_models_and_results(self, alg, best_params_config):
+        results = pd.DataFrame()
+        best_params = str(list(best_params_config.values())).replace(", ", "_").replace("[", "").replace("]", "")
+        base_models_p = f"./MODELS/{self.algs_type}/{alg}_{best_params}"
+        base_results_p = f"./LABELS/{self.algs_type}"
+        os.makedirs("/".join(base_models_p.split("/")[:-1]), exist_ok=True)
+        os.makedirs(base_results_p, exist_ok=True)
+        for subset_idx, subset in enumerate(self.data_subsets):
+            labels, model = self.run_single_algo(subset, alg_type=alg, hyper_params_config=best_params_config)
+            model_file_name = f"{base_models_p}_{subset_idx}.model"
+            joblib.dump(model, model_file_name)  # save model to file
+            col_n = f"subset_{subset_idx}"
+            results[col_n] = subset.index
+            results[f"{col_n}_labels"] = labels
+        results.to_csv(f"{base_results_p}/{alg}_{best_params}.csv")
+
+    def load_model(self, alg, best_params, subset_idx):
+        model_file_name = f"./MODELS/{self.algs_type}/{alg}_{best_params}_{subset_idx}.model"
+        return joblib.load(model_file_name)
