@@ -15,8 +15,8 @@ from pre_processing import compute_distances
 n_clusters = [2, 8, 10]
 distance_metrics = ["hamming", "jaccard"] #"gower",
 algo_types_clustering_params = {
-    # "DBSCAN": {"eps": [10, 0.1], "min_samples": [100, 10], "distance": distance_metrics},
-    "Hierarchical": {"n_clusters": n_clusters, "distance": distance_metrics, "linkage": ['average', 'single'],}, #
+    "DBSCAN": {"eps": [0.05, 0.1, 0.2], "min_samples": [2, 20], "distance": distance_metrics},
+    "Hierarchical": {"n_clusters": n_clusters, "distance": distance_metrics, "linkage": ['average', 'single']},
     # "KMeans": {"n_clusters": n_clusters},
     "KModes": {"n_clusters": n_clusters}
 }
