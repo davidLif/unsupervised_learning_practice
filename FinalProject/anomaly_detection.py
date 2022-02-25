@@ -3,13 +3,12 @@ import time
 import numpy as np
 from sklearn.cluster import DBSCAN
 from sklearn.ensemble import IsolationForest
-from sklearn.metrics import pairwise_distances
+from scipy.spatial.distance import jaccard
 
 anomaly_detect_algs = ["DBSCAN_anomaly", "IsolationForest"]
 algo_types_anomaly_params = {
-    "DBSCAN_anomaly": {"eps": [7, 10, 13, 15], "minSamples": [2, 4, 5]},
-    "IsolationForest": {"contamination": [0.001, 0.01, 0.1]},
-    "DirectDistance": {"maxDistance": [0.2, 0.25, 0.3], "K_neighbor": [2, 5, 10]}
+    "DBSCAN_anomaly": {"eps": [0.01, 0.05, 0.1, 0.3], "minSamples": [2, 3, 4]},
+    "IsolationForest": {"contamination": [0.01, 0.1, 0.15]}
 }
 # 5 diff methods:
 # 1- Statistical model (Example: MAD)  - assumes normal distribution. Fails
@@ -29,12 +28,6 @@ algo_types_anomaly_params = {
 # distance to center in Kmeans (must know num of clusters ahead of time)
 
 
-def similarity(x, y):
-    z = np.stack((x, y), axis=0)
-    c = pairwise_distances(z)
-    return c[0, 1]
-
-
 def apply_anomaly_detection(data_matrix, alg, hyper_params_config):
     """
 
@@ -45,7 +38,7 @@ def apply_anomaly_detection(data_matrix, alg, hyper_params_config):
     """
     if alg == "DBSCAN_anomaly":
         model = DBSCAN(eps=hyper_params_config["eps"], min_samples=hyper_params_config["minSamples"]
-                       , metric=similarity)
+                       , metric=jaccard)
 
         s = time.time()
         new_labels = model.fit_predict(data_matrix)

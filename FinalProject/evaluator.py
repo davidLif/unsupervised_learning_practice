@@ -12,6 +12,7 @@ from anomaly_detection import anomaly_detect_algs, apply_anomaly_detection, algo
 from dim_reduction import dim_reduction_algs, apply_dim_reduction
 from clustering import algo_types_clustering_params, clustering_algs, apply_clustering
 from statistic_tests import StatTester
+import joblib
 
 # TODO: move later to globals
 stats_dir = "./stats"
@@ -28,6 +29,7 @@ class Evaluator:
         self.num_of_iterations_for_statistical_analysis = num_of_iterations_for_statistical_analysis
         self.eval_on_test = eval_on_test
         self.algs_type = algs_type
+        self.model_counter = 0
         if self.algs_type == "clustering":
             self.algs = clustering_algs
             self.params_config = algo_types_clustering_params
@@ -51,6 +53,12 @@ class Evaluator:
             results, model = apply_anomaly_detection(data, alg_type, hyper_params_config)
         else:
             raise Exception("unKnown alg type")
+
+        if model is not None:
+            model_file_name = "./MODELS/{0}_{1}_{2}.model".format(
+                alg_type, str(hyper_params_config), self.model_counter)
+            joblib.dump(model, model_file_name)  # save model to file
+            self.model_counter += 1
 
         return results, model
 
