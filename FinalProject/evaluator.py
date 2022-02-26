@@ -54,7 +54,7 @@ class Evaluator:
         else:
             raise Exception("unKnown alg type")
 
-        if model is not None:
+        if model is not None and self.save_all_models:
             model_file_name = "./MODELS/{0}_{1}_{2}.model".format(
                 alg_type, str(hyper_params_config), self.model_counter)
             joblib.dump(model, model_file_name)  # save model to file
@@ -226,7 +226,11 @@ class Evaluator:
         for config_key_index in range(len(keys)):
             v = values[config_key_index]
             try:
-                v = int(v)
+                tmp_v = int(v)
+                if v == tmp_v:
+                    v=tmp_v
+                else:
+                    v= float(v)
             except:
                 try:
                     v = float(v)
