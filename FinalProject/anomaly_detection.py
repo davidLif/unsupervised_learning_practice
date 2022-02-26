@@ -5,11 +5,14 @@ from sklearn.cluster import DBSCAN
 from sklearn.ensemble import IsolationForest
 from scipy.spatial.distance import jaccard
 
-anomaly_detect_algs = ["DBSCAN_anomaly", "IsolationForest"]
+anomaly_detect_algs = ["DBSCAN_anomaly", "IsolationForest", "DirectDistance"]
 algo_types_anomaly_params = {
-    "DBSCAN_anomaly": {"eps": [0.01, 0.05, 0.1, 0.3], "minSamples": [2, 3, 4]},
-    "IsolationForest": {"contamination": [0.01, 0.1, 0.15]}
+    "DBSCAN_anomaly": {"eps": [0.45, 0.5, 0.55], "minSamples": [4, 10, 20]},
+    "IsolationForest": {"contamination": [0.01, 0.05, 0.1]},
+    "DirectDistance": {"K_neighbor": [20, 30], "maxDistance": [0.6, 0.7, 0.75]}
 }
+# Optimal epsilon value for dbscan for clustering: 0.3.
+
 # 5 diff methods:
 # 1- Statistical model (Example: MAD)  - assumes normal distribution. Fails
 # 2 - Clustering  ("bad grade" == anomaly), (one class SVM), (Isolation forest)
@@ -42,9 +45,17 @@ def apply_anomaly_detection(data_matrix, alg, hyper_params_config):
 
         s = time.time()
         new_labels = model.fit_predict(data_matrix)
-        print("Anomaly detection model {model} training seconds: {time}".format(model=alg, time=time.time() - s))
-        print("For hyper-params {0}".format(str(hyper_params_config)))
+        e = time.time()
+
         new_labels[new_labels >= 0] = 0
+        anomaly_percentage = len(new_labels[new_labels < 0]) / len(new_labels)
+
+        if anomaly_percentage <= 0.1:
+            print("Anomaly detection model {model} training seconds: {time}".format(model=alg, time=e - s))
+            print("For hyper-params {0}".format(str(hyper_params_config)))
+            print("Anomaly percentage is {0}".format(anomaly_percentage))
+        else:
+            print("Non anomaly hyper-params {0}".format(str(hyper_params_config)))
 
         return new_labels, model
     elif alg == "IsolationForest":
@@ -52,22 +63,45 @@ def apply_anomaly_detection(data_matrix, alg, hyper_params_config):
 
         s = time.time()
         new_labels = model.fit_predict(data_matrix)
-        print("Anomaly detection model {model} training seconds: {time}".format(model=alg, time=time.time() - s))
+        e = time.time()
+
         new_labels[new_labels >= 0] = 0
+        anomaly_percentage = len(new_labels[new_labels < 0]) / len(new_labels)
+
+        if anomaly_percentage <= 0.1:
+            print("Anomaly detection model {model} training seconds: {time}".format(model=alg, time=e - s))
+            print("For hyper-params {0}".format(str(hyper_params_config)))
+            print("Anomaly percentage is {0}".format(anomaly_percentage))
+        else:
+            print("Non anomaly hyper-params {0}".format(str(hyper_params_config)))
 
         return new_labels, model
     elif alg == "DirectDistance":
         k = hyper_params_config["K_neighbor"] + 1  # + 1 helps us to ignore the (i,i) cell
         max_distance = hyper_params_config["maxDistance"]
-        idx = np.argpartition(data_matrix, k)
-        k_closest_index_to_row = idx.iloc[:, k].values
+
         new_labels = np.zeros((data_matrix.shape[0]))
+        s = time.time()
         for i in range(data_matrix.shape[0]):
-            k_neighbor_distance = data_matrix.iloc[i, k_closest_index_to_row[i]]
+            distances_to_i = np.zeros((data_matrix.shape[0]))
+            for j in range(data_matrix.shape[0]):
+                distances_to_i[j] = jaccard(data_matrix[i], data_matrix[j])
+            sorted_distances = np.sort(distances_to_i)
+            k_neighbor_distance = sorted_distances[k]
             if k_neighbor_distance <= max_distance:
                 new_labels[i] = 0
             else:
                 new_labels[i] = -1
+        e = time.time()
+        anomaly_percentage = len(new_labels[new_labels < 0]) / len(new_labels)
+
+        if anomaly_percentage <= 0.1:
+            print("Anomaly detection model {model} training seconds: {time}".format(model=alg, time=e - s))
+            print("For hyper-params {0}".format(str(hyper_params_config)))
+            print("Anomaly percentage is {0}".format(anomaly_percentage))
+        else:
+            print("Non anomaly hyper-params {0}".format(str(hyper_params_config)))
+
         return new_labels, None
     else:
         raise Exception("no such anomaly detection algorithm")
