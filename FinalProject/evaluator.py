@@ -1,5 +1,7 @@
 import itertools
+import os
 
+import joblib
 import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
@@ -18,7 +20,8 @@ external_variables = ["dAge", "dHispanic", "iYearwrk", "iSex"]
 
 
 class Evaluator:
-    def __init__(self, data, num_of_iterations_for_statistical_analysis=10, eval_on_test=False, algs_type="clustering"):
+    def __init__(self, data, num_of_iterations_for_statistical_analysis=10,
+                 eval_on_test=False, algs_type="clustering", save_path=""):
         self.data = data
         self.data_subsets = None
         self.external_tags = None
@@ -39,6 +42,7 @@ class Evaluator:
         else:
             raise Exception("unknown algs type")
         self.statistic_tester = StatTester()
+        self.save_all_models = False
 
     def run_single_algo(self, data, alg_type, hyper_params_config):
         if alg_type in clustering_algs:
@@ -71,7 +75,8 @@ class Evaluator:
         return subsets, tags
 
     def apply_algs_with_all_hyper_params_configs(self):
-        self.data_subsets, self.external_tags = self.get_subsets(self.data, self.num_of_iterations_for_statistical_analysis)
+        self.data_subsets, self.external_tags = self.get_subsets(self.data,
+                                                                 self.num_of_iterations_for_statistical_analysis)
         for alg_name in tqdm(self.algs):
             self.all_hyper_params_results[alg_name] = {}
             hyper_params_config = self.params_config[alg_name]
@@ -84,9 +89,7 @@ class Evaluator:
     def run_all_hyper_parameters_combos(self, alg, hyper_params_config_keys, hyper_parameters_config_options):
         current_alg_hyper_params_results = {}
         for hyper_parameters_config in hyper_parameters_config_options:
-            combo_config = {}
-            for config_key_index in range(len(hyper_params_config_keys)):
-                combo_config[hyper_params_config_keys[config_key_index]] = hyper_parameters_config[config_key_index]
+            combo_config = self.convert_tuple2config(hyper_params_config_keys, hyper_parameters_config)
             scores = self.extract_scores(alg, combo_config, scores_to_extract=["silhouette", "mi"])
             current_alg_hyper_params_results[tuple(hyper_parameters_config)] = scores
         return current_alg_hyper_params_results
@@ -133,13 +136,14 @@ class Evaluator:
                     if out is not None:
                         scores.update({"external_vars": {col_n: {score_method: []} for col_n in tags.columns}})
                     for col_name in tags.columns:
-                        scores["external_vars"][col_name][score_method].append(self.calculate_score(labels, tags[col_name],
-                                                                                   score_method))
+                        scores["external_vars"][col_name][score_method].append(
+                            self.calculate_score(labels, tags[col_name],
+                                                 score_method))
         return scores
 
     def choose_best_hyperparams_config(self, alg_name, score_method="s_score"):
         alg_results = self.all_hyper_params_results[alg_name]
-        hyper_parameters_names = str(list(alg_results))
+        hyper_parameters_names = str(list(self.params_config[alg_name]))
         save_path = f"{stats_dir}/{alg_name}_hyperparam.csv"
         best_key = self.statistic_tester.find_best_config_based_on_statistic_test(alg_results,
                                                                                   hyper_parameters_names,
@@ -150,7 +154,7 @@ class Evaluator:
 
     def choose_best_external_variable(self, alg_name, score_method="mi_score"):
         alg_results = self.all_hyper_params_results[alg_name]["external_vars"]
-        hyper_parameters_names = str(list(alg_results))
+        hyper_parameters_names = "external_var"
         save_path = f"{stats_dir}/{alg_name}_external_vars_cmp.csv"
         best_key = self.statistic_tester.find_best_config_based_on_statistic_test(alg_results,
                                                                                   hyper_parameters_names,
@@ -167,16 +171,66 @@ class Evaluator:
         print(f"best alg: {best_key}")
         return self.all_hyper_params_results[best_key], best_key
 
-    def algs_evaluation_pipeline(self):
+    def algs_evaluation_pipeline(self, save_best=False):
         """
-
-        :return:
+        :param save_best: whether to save best models and theirs results or not
+        :return: None
         """
         self.apply_algs_with_all_hyper_params_configs()
-
+        best_hps = {}
         for alg_name in self.algs:
-            results, best_key = self.choose_best_hyperparams_config(alg_name, "silhouette")
+            results, hp_best_key = self.choose_best_hyperparams_config(alg_name, "silhouette")
+            best_hps[alg_name] = hp_best_key
             self.all_hyper_params_results[alg_name] = results
-            results, best_key = self.choose_best_external_variable(alg_name, "mi")
+            results, ev_best_key = self.choose_best_external_variable(alg_name, "mi")
             self.all_hyper_params_results[alg_name] = results
-        self.choose_best_alg("mi")
+        results, best_alg = self.choose_best_alg("mi")
+        if save_best:
+            self.save_best_models_and_results(best_alg, best_hps[best_alg])
+
+    def save_best_models_and_results(self, alg, best_params):
+        results = pd.DataFrame()
+        best_params_config = self.convert_tuple2config(list(self.params_config[alg].keys()),
+                                                       best_params)
+        best_params = str(list(best_params)).replace(", ", "_").replace("[", "").replace("]", "")
+        base_models_p = f"results/MODELS/{self.algs_type}/{alg}_{best_params}"
+        base_results_p = f"results/LABELS/{self.algs_type}"
+        os.makedirs("/".join(base_models_p.split("/")[:-1]), exist_ok=True)
+        os.makedirs(base_results_p, exist_ok=True)
+        for subset_idx, (train_d, test_d) in enumerate(self.data_subsets):
+            x = train_d if self.eval_on_test else pd.concat([train_d, test_d])
+            labels, model = self.run_single_algo(x.values, alg_type=alg, hyper_params_config=best_params_config)
+            model_file_name = f"{base_models_p}_{subset_idx}.model"
+            joblib.dump(model, model_file_name)  # save model to file
+            col_n = f"subset_{subset_idx}"
+            results[col_n] = x.index
+            results[f"{col_n}_labels"] = labels
+        results.to_csv(f"{base_results_p}/{alg}_{best_params}.csv")
+
+    def load_model(self, alg, best_params, subset_idx):
+        best_params = str(list(best_params)).replace(", ", "_").replace("[", "").replace("]", "")
+        model_file_name = f"./MODELS/{self.algs_type}/{alg}_{best_params}_{subset_idx}.model"
+        return joblib.load(model_file_name)
+
+    def convert_str2config(self, alg, hp_best_key):
+        params_config = algo_types_clustering_params[alg].copy()
+        params_names, params_values = hp_best_key.split("=")
+        params_names, params_values = list(params_names), list(params_values)
+        for param_n, param_v in zip(params_names, params_values):
+            params_config[param_n] = param_v
+        return params_config
+
+    @staticmethod
+    def convert_tuple2config(keys, values):
+        config = {}
+        for config_key_index in range(len(keys)):
+            v = values[config_key_index]
+            try:
+                v = int(v)
+            except:
+                try:
+                    v = float(v)
+                except:
+                    pass
+            config[keys[config_key_index]] = v
+        return config
