@@ -6,10 +6,12 @@ import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import silhouette_score, silhouette_samples, mutual_info_score
+from sklearn.preprocessing import OneHotEncoder
+from sklearn.model_selection import cross_val_score, RepeatedStratifiedKFold
 from tqdm import tqdm
 
 from anomaly_detection import anomaly_detect_algs, apply_anomaly_detection, algo_types_anomaly_params
-from dim_reduction import dim_reduction_algs, apply_dim_reduction
+from dim_reduction import dim_reduction_algs, apply_dim_reduction, algo_types_dim_reduction_params
 from clustering import algo_types_clustering_params, clustering_algs, apply_clustering
 from statistic_tests import StatTester
 import joblib
@@ -17,25 +19,37 @@ import joblib
 # TODO: move later to globals
 stats_dir = "./stats"
 external_variables = ["dAge", "dHispanic", "iYearwrk", "iSex"]
-
+DIM_REDUCTION= "dim_reduction"
 
 class Evaluator:
     def __init__(self, data, num_of_iterations_for_statistical_analysis=10,
-                 eval_on_test=False, algs_type="clustering", save_path=""):
+                 eval_on_test=False, algs_type="clustering", save_path="", model_path=None):
         self.data = data
         self.data_subsets = None
         self.external_tags = None
         self.all_hyper_params_results = {}
+        self.subset_fraction=0.01
         self.num_of_iterations_for_statistical_analysis = num_of_iterations_for_statistical_analysis
         self.eval_on_test = eval_on_test
         self.algs_type = algs_type
         self.model_counter = 0
+        self.scores_to_extract = ["silhouette", "mi"]
         if self.algs_type == "clustering":
             self.algs = clustering_algs
             self.params_config = algo_types_clustering_params
-        elif algs_type == "dim_reduction":
+        elif algs_type == DIM_REDUCTION:
             self.algs = dim_reduction_algs
-            self.params_config = {}
+            self.params_config = algo_types_dim_reduction_params
+            self.OH_encoder = OneHotEncoder(sparse=False).fit(self.data.drop(columns=external_variables))
+            self.num_of_iterations_for_statistical_analysis = 1
+            self.subset_fraction = 0.001
+            self.scores_to_extract = ["vis"]
+            if model_path is None:
+                model_path = self.load_model("results/MODELS/clustering/KModes_2_3.model")
+            # self.clustering_model = self.load_model("results/MODELS/clustering/DBSCAN_0.05_2_'hamming'_5.model")
+            self.clustering_model = self.load_model(model_path)
+            self.reduction_results = pd.DataFrame()
+
         elif algs_type == "anomaly_detect":
             self.algs = anomaly_detect_algs
             self.params_config = algo_types_anomaly_params
@@ -66,12 +80,17 @@ class Evaluator:
         subsets = []
         tags = []
         for test_iteration in range(num_subsets):
-            part_data = full_data.sample(frac=0.01, random_state=test_iteration)
+            part_data = full_data.sample(frac=self.subset_fraction, random_state=test_iteration)
             train_subset, test_subset = train_test_split(part_data, test_size=0.2,
                                                          random_state=test_iteration)  # choose data for this iteration
             tags.append((train_subset[external_variables], test_subset[external_variables]))
             drop_cols = external_variables
-            subsets.append((train_subset.drop(columns=drop_cols), test_subset.drop(columns=drop_cols)))
+            train_subset.drop(columns=drop_cols, inplace=True)
+            test_subset.drop(columns=drop_cols, inplace=True)
+            if self.algs_type == DIM_REDUCTION:
+                train_subset = pd.DataFrame(self.OH_encoder.transform(train_subset), index=train_subset.index)
+                test_subset = pd.DataFrame(self.OH_encoder.transform(test_subset), index=test_subset.index)
+            subsets.append((train_subset, test_subset))
         return subsets, tags
 
     def apply_algs_with_all_hyper_params_configs(self):
@@ -90,7 +109,7 @@ class Evaluator:
         current_alg_hyper_params_results = {}
         for hyper_parameters_config in hyper_parameters_config_options:
             combo_config = self.convert_tuple2config(hyper_params_config_keys, hyper_parameters_config)
-            scores = self.extract_scores(alg, combo_config, scores_to_extract=["silhouette", "mi"])
+            scores = self.extract_scores(alg, combo_config, scores_to_extract=self.scores_to_extract)
             current_alg_hyper_params_results[tuple(hyper_parameters_config)] = scores
         return current_alg_hyper_params_results
 
@@ -122,11 +141,18 @@ class Evaluator:
         scores = {score_m: [] for score_m in scores_to_extract}
         for ((train_d, test_d), (train_tags, test_tags)) in tqdm(zip(self.data_subsets, self.external_tags)):
             x = train_d.values if self.eval_on_test else pd.concat([train_d, test_d]).values
+            y = train_tags if self.eval_on_test else pd.concat([train_tags, test_tags])
             n_labels, model = self.run_single_algo(x, alg, combo_config)
             labels = model.predict(test_d) if self.eval_on_test else n_labels
             eval_x = test_d if self.eval_on_test else x
             for score_method in scores_to_extract:
-                if "silhouette" in score_method:
+                if self.algs_type == DIM_REDUCTION:
+                    self.reduction_results[f"{alg}_cmp1"] = labels['principle_cmp1']
+                    self.reduction_results[f"{alg}_cmp2"] = labels['principle_cmp2']
+                    if "clustering_results" not in self.reduction_results.columns:
+                        self.reduction_results["iYearwrk"] = y['iYearwrk'].values
+                        self.reduction_results["clustering_results"] = self.clustering_model.fit_predict(x)
+                elif "silhouette" in score_method:
                     scores[score_method].append(self.calculate_score(eval_x, labels, score_method))
                 elif "ic" in score_method:
                     scores[score_method].append(self.calculate_score(eval_x, labels, score_method, model=model))
@@ -178,15 +204,20 @@ class Evaluator:
         """
         self.apply_algs_with_all_hyper_params_configs()
         best_hps = {}
-        for alg_name in self.algs:
-            results, hp_best_key = self.choose_best_hyperparams_config(alg_name, "silhouette")
-            best_hps[alg_name] = hp_best_key
-            self.all_hyper_params_results[alg_name] = results
-            results, ev_best_key = self.choose_best_external_variable(alg_name, "mi")
-            self.all_hyper_params_results[alg_name] = results
-        results, best_alg = self.choose_best_alg("mi")
-        if save_best:
-            self.save_best_models_and_results(best_alg, best_hps[best_alg])
+        if self.algs_type == DIM_REDUCTION:
+            from visualization import plot_all_dim_reduc
+            plot_all_dim_reduc(self.reduction_results, f"results/dim_reduction_cmp.png")
+        else:
+            for alg_name in self.algs:
+                results, hp_best_key = self.choose_best_hyperparams_config(alg_name, "silhouette")
+                best_hps[alg_name] = hp_best_key
+                self.all_hyper_params_results[alg_name] = results
+                results, ev_best_key = self.choose_best_external_variable(alg_name, "mi")
+                self.all_hyper_params_results[alg_name] = results
+            results, best_alg = self.choose_best_alg("mi")
+            if save_best:
+                return self.save_best_models_and_results(best_alg, best_hps[best_alg])
+        return None
 
     def save_best_models_and_results(self, alg, best_params):
         results = pd.DataFrame()
@@ -206,10 +237,11 @@ class Evaluator:
             results[col_n] = x.index
             results[f"{col_n}_labels"] = labels
         results.to_csv(f"{base_results_p}/{alg}_{best_params}.csv")
+        return model_file_name
 
-    def load_model(self, alg, best_params, subset_idx):
-        best_params = str(list(best_params)).replace(", ", "_").replace("[", "").replace("]", "")
-        model_file_name = f"./MODELS/{self.algs_type}/{alg}_{best_params}_{subset_idx}.model"
+    def load_model(self, model_path):
+        # best_params = str(list(best_params)).replace(", ", "_").replace("[", "").replace("]", "")
+        model_file_name = f"{model_path}"
         return joblib.load(model_file_name)
 
     def convert_str2config(self, alg, hp_best_key):

@@ -1,4 +1,4 @@
-,"['dAge', 'dHispanic', 'iYearwrk', 'iSex']=dAge","['dAge', 'dHispanic', 'iYearwrk', 'iSex']=dHispanic","['dAge', 'dHispanic', 'iYearwrk', 'iSex']=iYearwrk","['dAge', 'dHispanic', 'iYearwrk', 'iSex']=iSex"
+,external_var=dAge,external_var=dHispanic,external_var=iYearwrk,external_var=iSex
 0,0.4782026256277882,0.0007269651316025852,0.5439959906755452,0.0003433661419831313
 1,0.4817122311849611,0.0007959403328596825,0.5450553065439809,0.00042166668842244515
 2,0.476701788947842,0.00042938649999779786,0.5430290985401889,0.0005660352762719145
