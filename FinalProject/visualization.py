@@ -66,7 +66,7 @@ def plot_all_dim_reduc(data, save_path):
     for i, dim_reduc_alg in enumerate(algs):
         df['cmp 1'] = data[f"{dim_reduc_alg}_cmp1"]
         df['cmp 2'] = data[f"{dim_reduc_alg}_cmp2"]
-        sub_df = df.sample(1000, random_state=0)
+        sub_df = df #.sample(1000, random_state=0)
         for j, hue in enumerate(["iYearwrk", "clustering_results"]):
             colors = sns.color_palette("hls", len(np.unique(sub_df[hue])))
             if hue == "clustering_results" and -1 in sub_df[hue].values:

@@ -42,7 +42,7 @@ class Evaluator:
             self.params_config = algo_types_dim_reduction_params
             self.OH_encoder = OneHotEncoder(sparse=False).fit(self.data.drop(columns=external_variables))
             self.num_of_iterations_for_statistical_analysis = 1
-            self.subset_fraction = 0.001
+            self.subset_fraction = 0.01
             self.scores_to_extract = ["vis"]
             if model_path is None:
                 model_path = self.load_model("results/MODELS/clustering/KModes_2_3.model")
@@ -87,7 +87,7 @@ class Evaluator:
             drop_cols = external_variables
             train_subset.drop(columns=drop_cols, inplace=True)
             test_subset.drop(columns=drop_cols, inplace=True)
-            if self.algs_type == DIM_REDUCTION:
+            if False and self.algs_type == DIM_REDUCTION:
                 train_subset = pd.DataFrame(self.OH_encoder.transform(train_subset), index=train_subset.index)
                 test_subset = pd.DataFrame(self.OH_encoder.transform(test_subset), index=test_subset.index)
             subsets.append((train_subset, test_subset))
