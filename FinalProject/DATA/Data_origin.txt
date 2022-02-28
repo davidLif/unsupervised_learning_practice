@@ -1,0 +1,36 @@
+https://archive.ics.uci.edu/ml/datasets/US+Census+Data+%281990%29
+
+USCensus1990.clean_data.csv:
+
+1- Remove features with very low diversity (remove_features_with_low_diversity.py)
+
+iFeb55 0 0.9813251921563204
+dIncome3 0 0.9891749736096507
+iMay75880 0 0.9895496250434754
+iOthrserv 0 0.9984904109979111
+iRelat2 0 0.9861049471481135
+iSept80 0 0.9839863970206871
+
+2- Remove one features from pairs with high mutual information:
+
+iDisabl1    0.977813
+Name: iDisabl2, dtype: float64
+iDisabl2 is correlated to Index(['iDisabl1'], dtype='object')
+iMobillim    0.97183
+Name: iPerscare, dtype: float64
+iPerscare is correlated to Index(['iMobillim'], dtype='object')
+iRownchld    0.950008
+Name: iRrelchld, dtype: float64
+iRrelchld is correlated to Index(['iRownchld'], dtype='object')
+['iDisabl2', 'iPerscare', 'iRrelchld']
+
+# At this stage, none of the data seemed to have bayesian distribution
+
+3- Use MCA
+
+USCensus1990.MCA_20features.csv
+
+
+
+
+

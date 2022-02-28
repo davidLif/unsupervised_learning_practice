@@ -1,6 +1,5 @@
 import matplotlib.pyplot as plt
 from sklearn.neighbors import NearestNeighbors
-from scipy.spatial.distance import jaccard
 import numpy as np
 import pandas as pd
 
@@ -8,8 +7,8 @@ import pandas as pd
 
 
 def load_data():
-    data_df = pd.read_csv("./DATA/USCensus1990.clean_data.csv", dtype=np.int)
-    return data_df.drop(columns="Unnamed: 0").sample(5000, random_state=0)  # train_data, test_data
+    data_df = pd.read_csv("./DATA/USCensus1990.MCA_20features.csv")
+    return data_df.drop(columns="Unnamed: 0").sample(100000, random_state=0)  # train_data, test_data
 
 
 if __name__ == "__main__":
@@ -17,7 +16,7 @@ if __name__ == "__main__":
 
     data = load_data()
 
-    neigh = NearestNeighbors(n_neighbors=2, metric=jaccard)
+    neigh = NearestNeighbors(n_neighbors=2)
     nbrs = neigh.fit(data.drop(columns=external_variables))
     distances, indices = nbrs.kneighbors(data.drop(columns=external_variables))
     distances = np.sort(distances, axis=0)

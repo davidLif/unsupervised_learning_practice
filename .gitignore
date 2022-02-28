@@ -133,10 +133,9 @@ dmypy.json
 
 # Binary files
 *.png
-*.svg
 
 # Do not save original data - too large
-FinalProject/DATA/*
+FinalProject/DATA/*.csv
 FinalProject/LABELS/*
 FinalProject/MODELS/*
 FinalProject/SCORES/*
