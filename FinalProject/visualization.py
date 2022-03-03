@@ -1,3 +1,4 @@
+from pathlib import Path
 import numpy as np
 import pandas as pd
 import seaborn as sns
@@ -85,30 +86,46 @@ def plot_all_dim_reduc(data, save_path):
     handles, labels = subs[0,0].get_legend_handles_labels()
     legend1 = plt.legend(handles, labels,  bbox_to_anchor=(-1.5,5))#, loc='center')
     handles, labels = subs[0,1].get_legend_handles_labels()
-    plt.legend(handles, labels, bbox_to_anchor=(1.1,5))#, loc='center')
+    plt.legend(handles, labels, bbox_to_anchor=(2,5))#, loc='center')
     plt.gca().add_artist(legend1)
     plt.savefig(save_path, dpi=300, bbox_inches='tight')
 
 
-def plot_mi_boxplots(csv_fs, save_path):
+def plot_boxplots(csv_fs, save_path, ylabel="MI score", xlabel="Hyperparameters Options", ylim=(0,1)):
     """
     plot the silhouette distribution using boxplot
     :param csv_fs: list of all the csv files we want to plot theirs boxplot
     :param save_path: where to save the plot
     :return: None
     """
-    fig, subs = plt.subplots(1, len(csv_fs), figsize=(16, 7))
+    plt.rcParams.update({'axes.titlesize': 'large', 'axes.labelsize': 'medium'})
+    fig, subs = plt.subplots(1, len(csv_fs), figsize=(15, 5))
     for i, csv_f in enumerate(csv_fs):
+        title = csv_f.stem.split("_")[0]
+        csv_f = str(csv_f)
         all_data = pd.read_csv(csv_f).replace(-100000, -1.1)
         data = all_data.loc[:9]
         data = data.drop(columns="Unnamed: 0")
-        data = data.rename(columns={old_col: old_col[:20] + "-" + str(i) for i, old_col in enumerate(data.columns)})
+        data = data.rename(columns={old_col: (old_col.split("=")[-1]) for i, old_col in enumerate(data.columns)})
         sns.boxplot(palette=sns.color_palette("hls"), data=data, ax=subs[i])
-        subs[i].set_xticklabels(labels=data.columns, rotation=45)
-        subs[i].title.set_text(csv_f.split("_")[0])
-    fig.text(0.5, -0.15, 'Hyperparameters Options', ha='center')
-    fig.text(0.04, 0.5, 'MI Score', va='center', rotation='vertical')
-    plt.savefig(save_path, dpi=300, bbox_inches='tight')
+        subs[i].set_xticklabels(labels=data.columns, rotation=-45, fontsize=12)
+        subs[i].set_yticklabels(labels=np.arange(ylim[0], ylim[1], 0.02), fontsize=12)
+        subs[i].title.set_text(title)
+        subs[i].title.set_size(18)
+        subs[i].set_ylim(ylim)
+    fig.text(0.5, -0.1, xlabel, ha='center', size=18)
+    fig.text(0.05, 0.5, ylabel, va='center', rotation='vertical', size=18)
+    # plt.show()
+    plt.savefig(save_path,dpi=300,bbox_inches='tight')
+
+
+def plot_all_boxplots(dir_with_csvs):
+    save_path = "results/clustering_evaluation/{}.png"
+    external_vars_csvs = [file for file in dir_with_csvs.iterdir() if file.suffix==".csv" and "external_vars" in file.stem]
+    hyperparams_csvs = [file for file in dir_with_csvs.iterdir() if file.suffix==".csv" and "hyperparam" in file.stem]
+    plot_boxplots(external_vars_csvs, save_path.format("external_vars_cmp"), ylabel="MI score", xlabel="External Variables")
+    plot_boxplots(hyperparams_csvs, save_path.format("hyperparam_cmp"), ylabel="Silhouette score", xlabel="Hyperparameters Options", ylim=(-1,1))
+
 
 
 def plot_elbow(data, save_path):
