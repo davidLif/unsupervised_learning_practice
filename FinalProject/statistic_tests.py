@@ -53,7 +53,7 @@ class StatTester:
 
     def apply_statistic_test(self, quantitative_data, quantitative_score="silhouette"):
         self.params_keys = list(quantitative_data.keys())
-
+        self.top2_idxs = None
         comparing_scores = [quantitative_data[key][quantitative_score] for key in self.params_keys]
         num_data_to_compare = len(quantitative_data.keys())
         best_res = np.array(comparing_scores)
@@ -103,15 +103,17 @@ class StatTester:
 
             return self.params_keys[0]
         elif self.t_pvalue > 0.05:
-            print("null hypothesis of paired ttest accepted - take first config")
+            print(f"null hypothesis of paired ttest accepted - take first config from top 2 idxs {self.top2_idxs}")
             with open(save_path, 'a') as f:
                 # create the csv writer
                 writer = csv.writer(f)
                 writer.writerow("")
                 writer.writerow(["anova p-value score:", self.anova_pvalue])
                 writer.writerow(["Null hypothesis of t-test accepted with pvalue", self.t_pvalue])
-
-            return self.params_keys[0]
+            best_idx = 0
+            if self.top2_idxs is not None:
+                best_idx = self.top2_idxs[0]
+            return self.params_keys[best_idx]
         else:
             if quantitative_score == "mi_score":
                 quantitative_score_name = "mutual_info_score"

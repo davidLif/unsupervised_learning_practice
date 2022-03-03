@@ -10,12 +10,12 @@ from pyclustering.cluster.encoder import cluster_encoder
 
 RANDOM_STATE = 2022
 n_clusters = [2, 8, 10]
-distance_metrics = ["hamming", "jaccard"] #"gower",
+distance_metrics = ["euclidean"]  # ["hamming", "jaccard"]
 algo_types_clustering_params = {
-    "DBSCAN": {"eps": [0.05, 0.1, 0.2], "min_samples": [2, 20], "distance": distance_metrics},
-    "Hierarchical": {"n_clusters": n_clusters, "distance": distance_metrics, "linkage": ['average', 'single']},
-    # "KMeans": {"n_clusters": n_clusters},
-    "KModes": {"n_clusters": n_clusters}
+    "DBSCAN": {"eps": [0.45, 0.5, 0.6], "min_samples": [10, 20]}, #"eps": [0.05, 0.1, 0.2], "min_samples": [2, 20], "distance": distance_metrics},
+    "Hierarchical": {"n_clusters": n_clusters}, #, "distance": distance_metrics},  # , "linkage": ['average', 'single']},
+    "KMeans": {"n_clusters": n_clusters},
+    # "KModes": {"n_clusters": n_clusters}
 }
 clustering_algs = list(algo_types_clustering_params.keys())
 
@@ -49,18 +49,17 @@ class KMeans_:
 def apply_clustering(x, alg_type, hyper_params_config):
     if alg_type == "KMeans":
         model = KMeans(init="k-means++", n_clusters=hyper_params_config["n_clusters"], random_state=RANDOM_STATE)
-    elif alg_type == "kmeans_adapted_distance":
-        model = KMeans(x, hyper_params_config["n_clusters"])
     elif alg_type == "KModes":
-        model = KModes(init="random", n_clusters=hyper_params_config["n_clusters"], n_jobs=-1, random_state=RANDOM_STATE)
+        model = KModes(init="random", n_clusters=hyper_params_config["n_clusters"], n_jobs=-1,
+                       random_state=RANDOM_STATE)
     else:
         # x = compute_distances(x, hyper_params_config["distance"])
         if alg_type == "Hierarchical":
-            model = AgglomerativeClustering(n_clusters=hyper_params_config["n_clusters"]
-                                            ,affinity=hyper_params_config["distance"], linkage=hyper_params_config["linkage"])
+            model = AgglomerativeClustering(n_clusters=hyper_params_config["n_clusters"])
+                                            #, affinity=hyper_params_config["distance"])  # , linkage=hyper_params_config["linkage"])
         elif alg_type == "DBSCAN":
-            model = DBSCAN(eps=hyper_params_config["eps"], min_samples=hyper_params_config["min_samples"],
-                           metric=hyper_params_config["distance"])
+            model = DBSCAN(eps=hyper_params_config["eps"], min_samples=hyper_params_config["min_samples"],)
+                           #metric=hyper_params_config["distance"])
         else:
             raise Exception("no such clustering algorithm")
 

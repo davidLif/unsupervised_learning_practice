@@ -13,7 +13,7 @@ algo_types_dim_reduction_params = {
         "LLE": {"n_neighbors": [50]},
         "EigenMaps": {"n_neighbors": [50]}
 }
-dim_reduction_algs = [alg_n for alg_n in algo_types_dim_reduction_params]
+dim_reduction_algs = [alg_n for alg_n in sorted(list(algo_types_dim_reduction_params.keys()))]
 
 
 def find_topmost_describable_features_in_mca(model):
@@ -69,7 +69,7 @@ def apply_dim_reduction(x, alg_type, hyper_params_config, n_components=2):
         model = MDS(n_components=n_components)
         transformed_data = model.fit_transform(x)
     elif alg_type == "TSNE":
-        model = TSNE(n_components=n_components, learning_rate='auto',metric="hamming")
+        model = TSNE(n_components=n_components, learning_rate='auto')
         # score = model.kl_divergence_
         transformed_data = model.fit_transform(x)
     elif alg_type == "ISO":

@@ -22,18 +22,20 @@ external_variables = ["dAge", "dHispanic", "iYearwrk", "iSex"]
 DIM_REDUCTION= "dim_reduction"
 
 class Evaluator:
-    def __init__(self, data, num_of_iterations_for_statistical_analysis=10,
-                 eval_on_test=False, algs_type="clustering", save_path="", model_path=None):
+    def __init__(self, data, transformed_data=None, num_of_iterations_for_statistical_analysis=10,
+                 eval_on_test=False, algs_type="clustering", do_one_hot=False,save_path="", model_path=None):
         self.data = data
+        self.transformed_data = transformed_data
         self.data_subsets = None
         self.external_tags = None
         self.all_hyper_params_results = {}
-        self.subset_fraction=0.01
+        self.subset_fraction=0.5
         self.num_of_iterations_for_statistical_analysis = num_of_iterations_for_statistical_analysis
         self.eval_on_test = eval_on_test
         self.algs_type = algs_type
         self.model_counter = 0
         self.scores_to_extract = ["silhouette", "mi"]
+        self.do_one_hot = do_one_hot
         if self.algs_type == "clustering":
             self.algs = clustering_algs
             self.params_config = algo_types_clustering_params
@@ -87,9 +89,12 @@ class Evaluator:
             drop_cols = external_variables
             train_subset.drop(columns=drop_cols, inplace=True)
             test_subset.drop(columns=drop_cols, inplace=True)
-            if False and self.algs_type == DIM_REDUCTION:
+            if self.do_one_hot and self.algs_type == DIM_REDUCTION:
                 train_subset = pd.DataFrame(self.OH_encoder.transform(train_subset), index=train_subset.index)
                 test_subset = pd.DataFrame(self.OH_encoder.transform(test_subset), index=test_subset.index)
+                indxs = train_subset.index.union(test_subset.index).astype(int)
+                if self.transformed_data is not None:
+                    self.transformed_data = self.transformed_data.loc[indxs].values
             subsets.append((train_subset, test_subset))
         return subsets, tags
 
@@ -151,7 +156,14 @@ class Evaluator:
                     self.reduction_results[f"{alg}_cmp2"] = labels['principle_cmp2']
                     if "clustering_results" not in self.reduction_results.columns:
                         self.reduction_results["iYearwrk"] = y['iYearwrk'].values
-                        self.reduction_results["clustering_results"] = self.clustering_model.fit_predict(x)
+                        if self.transformed_data is None:
+                            self.transformed_data = x
+                        try:
+                            self.reduction_results["clustering_results"] = self.clustering_model.predict(self.transformed_data)
+                        except:
+                            self.reduction_results["clustering_results"] = self.clustering_model.fit_predict(self.transformed_data)
+                        #tags = test_tags if self.eval_on_test else pd.concat([train_tags, test_tags])
+                        # plot_clusters(labels, tags, self.reduction_results["clustering_results"],f"{alg}.png")
                 elif "silhouette" in score_method:
                     scores[score_method].append(self.calculate_score(eval_x, labels, score_method))
                 elif "ic" in score_method:
