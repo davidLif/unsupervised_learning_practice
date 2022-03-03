@@ -19,7 +19,7 @@ if __name__ == "__main__":
     if not os.path.exists(stats_dir):
         os.mkdir(stats_dir)
 
-    clustering_evaluator = Evaluator(data, algs_type="clustering")
+    clustering_evaluator = Evaluator(data, algs_type="anomaly_detect")
     best_model_path = clustering_evaluator.algs_evaluation_pipeline(save_best=True)
-    dim_reduction_evaluator = Evaluator(data, algs_type="dim_reduction", model_path=best_model_path)
-    dim_reduction_evaluator.algs_evaluation_pipeline(save_best=True)
+    #dim_reduction_evaluator = Evaluator(data, algs_type="dim_reduction", model_path=best_model_path)
+    #dim_reduction_evaluator.algs_evaluation_pipeline(save_best=True)

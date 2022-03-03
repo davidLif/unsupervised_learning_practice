@@ -6,9 +6,9 @@ from sklearn.ensemble import IsolationForest
 
 anomaly_detect_algs = ["DBSCAN_anomaly", "IsolationForest", "DirectDistance"]
 algo_types_anomaly_params = {
-    "DBSCAN_anomaly": {"eps": [1.5, 1.6, 1.7], "minSamples": [10, 20]},
+    "DBSCAN_anomaly": {"eps": [0.65, 0.7, 0.75], "minSamples": [10, 20]},
     "IsolationForest": {"contamination": [0.01, 0.05, 0.1]},
-    "DirectDistance": {"K_neighbor": [20, 30], "maxDistance": [1.5, 1.75, 2]}
+    "DirectDistance": {"K_neighbor": [20, 30], "maxDistance": [0.45, 0.5, 0.55]}
 }
 # Optimal epsilon value for dbscan for clustering according to optimal_dbscan_e.py: 0.5
 # Didn't work so well for anomaly detection :(
@@ -50,7 +50,7 @@ def apply_anomaly_detection(data_matrix, alg, hyper_params_config):
         new_labels[new_labels >= 0] = 0
         anomaly_percentage = len(new_labels[new_labels < 0]) / len(new_labels)
 
-        if anomaly_percentage <= 0.1:
+        if anomaly_percentage <= 0.5:
             print("Anomaly detection model {model} training seconds: {time}".format(model=alg, time=e - s))
             print("For hyper-params {0}".format(str(hyper_params_config)))
             print("Anomaly percentage is {0}".format(anomaly_percentage))
@@ -68,7 +68,7 @@ def apply_anomaly_detection(data_matrix, alg, hyper_params_config):
         new_labels[new_labels >= 0] = 0
         anomaly_percentage = len(new_labels[new_labels < 0]) / len(new_labels)
 
-        if anomaly_percentage <= 0.1:
+        if anomaly_percentage <= 0.5:
             print("Anomaly detection model {model} training seconds: {time}".format(model=alg, time=e - s))
             print("For hyper-params {0}".format(str(hyper_params_config)))
             print("Anomaly percentage is {0}".format(anomaly_percentage))
@@ -95,7 +95,7 @@ def apply_anomaly_detection(data_matrix, alg, hyper_params_config):
         e = time.time()
         anomaly_percentage = len(new_labels[new_labels < 0]) / len(new_labels)
 
-        if anomaly_percentage <= 0.1:
+        if anomaly_percentage <= 0.5:
             print("Anomaly detection model {model} training seconds: {time}".format(model=alg, time=e - s))
             print("For hyper-params {0}".format(str(hyper_params_config)))
             print("Anomaly percentage is {0}".format(anomaly_percentage))

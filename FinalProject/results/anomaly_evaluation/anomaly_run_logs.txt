@@ -2,609 +2,664 @@ Sample: 200000
 
 Assuming: 0.01 of data are outliers
 Chosen parameters:
-    DBSCAN_anomaly: {'eps': 1.5, 'minSamples': 10}
+    DBSCAN_anomaly: {'eps': 0.65, 'minSamples': 10}
     IsolationForest: {'contamination': 0.01}
-    DirectDistance: {'K_neighbor': 20, 'maxDistance': 2}
+    DirectDistance: {'K_neighbor': 20, 'maxDistance': 0.55}
 
+/usr/bin/python3.8 /home/david/PycharmProjects/unsupervised_learning_practice/FinalProject/main.py
+/home/david/.local/lib/python3.8/site-packages/pandas/core/frame.py:4906: SettingWithCopyWarning:
+A value is trying to be set on a copy of a slice from a DataFrame
 
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  return super().drop(
+  0%|          | 0/3 [00:00<?, ?it/s]
+0it [00:00, ?it/s]Anomaly detection model DBSCAN_anomaly training seconds: 0.12482976913452148
+For hyper-params {'eps': 0.65, 'minSamples': 10}
+Anomaly percentage is 0.1405
 
-DBSCAN_anomaly
-For hyper-params {'eps': 1.5, 'minSamples': 10}
-Anomaly percentage is 0.0125
+1it [00:00,  2.92it/s]Anomaly detection model DBSCAN_anomaly training seconds: 0.12501311302185059
+For hyper-params {'eps': 0.65, 'minSamples': 10}
+Anomaly percentage is 0.164
 
-DBSCAN_anomaly
-For hyper-params {'eps': 1.5, 'minSamples': 10}
-Anomaly percentage is 0.005
+2it [00:00,  3.13it/s]Anomaly detection model DBSCAN_anomaly training seconds: 0.16915440559387207
+For hyper-params {'eps': 0.65, 'minSamples': 10}
+Anomaly percentage is 0.1535
 
-DBSCAN_anomaly
-For hyper-params {'eps': 1.5, 'minSamples': 10}
-Anomaly percentage is 0.0075
+3it [00:01,  2.80it/s]Anomaly detection model DBSCAN_anomaly training seconds: 0.11739277839660645
+For hyper-params {'eps': 0.65, 'minSamples': 10}
+Anomaly percentage is 0.154
 
-DBSCAN_anomaly
-For hyper-params {'eps': 1.5, 'minSamples': 10}
-Anomaly percentage is 0.0085
-DBSCAN_anomaly
-For hyper-params {'eps': 1.5, 'minSamples': 10}
-Anomaly percentage is 0.013
+4it [00:01,  2.95it/s]Anomaly detection model DBSCAN_anomaly training seconds: 0.11304044723510742
+For hyper-params {'eps': 0.65, 'minSamples': 10}
+Anomaly percentage is 0.1495
 
-DBSCAN_anomaly
-For hyper-params {'eps': 1.5, 'minSamples': 10}
-Anomaly percentage is 0.008
+5it [00:01,  3.15it/s]Anomaly detection model DBSCAN_anomaly training seconds: 0.14607954025268555
+For hyper-params {'eps': 0.65, 'minSamples': 10}
+Anomaly percentage is 0.158
 
-DBSCAN_anomaly
-For hyper-params {'eps': 1.5, 'minSamples': 10}
-Anomaly percentage is 0.0045
+6it [00:01,  3.15it/s]Anomaly detection model DBSCAN_anomaly training seconds: 0.11691784858703613
+For hyper-params {'eps': 0.65, 'minSamples': 10}
+Anomaly percentage is 0.1585
 
-DBSCAN_anomaly
-For hyper-params {'eps': 1.5, 'minSamples': 10}
-Anomaly percentage is 0.006
-DBSCAN_anomaly
-For hyper-params {'eps': 1.5, 'minSamples': 10}
-Anomaly percentage is 0.009
+7it [00:02,  3.22it/s]Anomaly detection model DBSCAN_anomaly training seconds: 0.08736658096313477
+For hyper-params {'eps': 0.65, 'minSamples': 10}
+Anomaly percentage is 0.1555
 
-DBSCAN_anomaly
-For hyper-params {'eps': 1.5, 'minSamples': 10}
-Anomaly percentage is 0.0065
+8it [00:02,  3.38it/s]Anomaly detection model DBSCAN_anomaly training seconds: 0.11733293533325195
+For hyper-params {'eps': 0.65, 'minSamples': 10}
+Anomaly percentage is 0.166
 
-DBSCAN_anomaly
-For hyper-params {'eps': 1.5, 'minSamples': 20}
-Anomaly percentage is 0.018
+9it [00:02,  3.38it/s]Anomaly detection model DBSCAN_anomaly training seconds: 0.1406710147857666
+For hyper-params {'eps': 0.65, 'minSamples': 10}
+Anomaly percentage is 0.1645
 
-DBSCAN_anomaly
-For hyper-params {'eps': 1.5, 'minSamples': 20}
-Anomaly percentage is 0.0235
+10it [00:03,  3.19it/s]
 
-DBSCAN_anomaly
-For hyper-params {'eps': 1.5, 'minSamples': 20}
-Anomaly percentage is 0.0225
-DBSCAN_anomaly
-For hyper-params {'eps': 1.5, 'minSamples': 20}
-Anomaly percentage is 0.0225
+0it [00:00, ?it/s]Anomaly detection model DBSCAN_anomaly training seconds: 0.11351156234741211
+For hyper-params {'eps': 0.65, 'minSamples': 20}
+Anomaly percentage is 0.2115
 
-DBSCAN_anomaly
-For hyper-params {'eps': 1.5, 'minSamples': 20}
-Anomaly percentage is 0.026
+1it [00:00,  3.42it/s]Anomaly detection model DBSCAN_anomaly training seconds: 0.11419558525085449
+For hyper-params {'eps': 0.65, 'minSamples': 20}
+Anomaly percentage is 0.215
 
-DBSCAN_anomaly
-For hyper-params {'eps': 1.5, 'minSamples': 20}
-Anomaly percentage is 0.0205
+2it [00:00,  3.44it/s]Anomaly detection model DBSCAN_anomaly training seconds: 0.11434793472290039
+For hyper-params {'eps': 0.65, 'minSamples': 20}
+Anomaly percentage is 0.203
 
-DBSCAN_anomaly
-For hyper-params {'eps': 1.5, 'minSamples': 20}
-Anomaly percentage is 0.023
+3it [00:00,  3.44it/s]Anomaly detection model DBSCAN_anomaly training seconds: 0.11443090438842773
+For hyper-params {'eps': 0.65, 'minSamples': 20}
+Anomaly percentage is 0.21
 
-DBSCAN_anomaly
-For hyper-params {'eps': 1.5, 'minSamples': 20}
-Anomaly percentage is 0.02
+4it [00:01,  3.45it/s]Anomaly detection model DBSCAN_anomaly training seconds: 0.11445808410644531
+For hyper-params {'eps': 0.65, 'minSamples': 20}
+Anomaly percentage is 0.1995
 
-DBSCAN_anomaly
-For hyper-params {'eps': 1.5, 'minSamples': 20}
-Anomaly percentage is 0.02
+5it [00:01,  3.45it/s]Anomaly detection model DBSCAN_anomaly training seconds: 0.11431717872619629
+For hyper-params {'eps': 0.65, 'minSamples': 20}
+Anomaly percentage is 0.1895
 
-DBSCAN_anomaly
-For hyper-params {'eps': 1.5, 'minSamples': 20}
-Anomaly percentage is 0.0205
+6it [00:01,  3.45it/s]Anomaly detection model DBSCAN_anomaly training seconds: 0.11323332786560059
+For hyper-params {'eps': 0.65, 'minSamples': 20}
+Anomaly percentage is 0.2175
 
-DBSCAN_anomaly
-For hyper-params {'eps': 1.6, 'minSamples': 10}
-Anomaly percentage is 0.007
+7it [00:02,  3.45it/s]Anomaly detection model DBSCAN_anomaly training seconds: 0.11333608627319336
+For hyper-params {'eps': 0.65, 'minSamples': 20}
+Anomaly percentage is 0.222
 
-DBSCAN_anomaly
-For hyper-params {'eps': 1.6, 'minSamples': 10}
-Anomaly percentage is 0.0025
+8it [00:02,  3.45it/s]Anomaly detection model DBSCAN_anomaly training seconds: 0.11732888221740723
+For hyper-params {'eps': 0.65, 'minSamples': 20}
+Anomaly percentage is 0.1925
 
-DBSCAN_anomaly
-For hyper-params {'eps': 1.6, 'minSamples': 10}
-Anomaly percentage is 0.0015
+9it [00:02,  3.41it/s]Anomaly detection model DBSCAN_anomaly training seconds: 0.11152839660644531
+For hyper-params {'eps': 0.65, 'minSamples': 20}
+Anomaly percentage is 0.1975
 
-DBSCAN_anomaly
-For hyper-params {'eps': 1.6, 'minSamples': 10}
-Anomaly percentage is 0.0085
+10it [00:02,  3.38it/s]
 
-DBSCAN_anomaly
-For hyper-params {'eps': 1.6, 'minSamples': 10}
-Anomaly percentage is 0.0055
+0it [00:00, ?it/s]Anomaly detection model DBSCAN_anomaly training seconds: 0.14066839218139648
+For hyper-params {'eps': 0.7, 'minSamples': 10}
+Anomaly percentage is 0.116
 
-DBSCAN_anomaly
-For hyper-params {'eps': 1.6, 'minSamples': 10}
-Anomaly percentage is 0.006
+1it [00:00,  2.98it/s]Anomaly detection model DBSCAN_anomaly training seconds: 0.11666727066040039
+For hyper-params {'eps': 0.7, 'minSamples': 10}
+Anomaly percentage is 0.124
 
-DBSCAN_anomaly
-For hyper-params {'eps': 1.6, 'minSamples': 10}
-Anomaly percentage is 0.003
+2it [00:00,  3.12it/s]Anomaly detection model DBSCAN_anomaly training seconds: 0.11670589447021484
+For hyper-params {'eps': 0.7, 'minSamples': 10}
+Anomaly percentage is 0.1185
 
-DBSCAN_anomaly
-For hyper-params {'eps': 1.6, 'minSamples': 10}
-Anomaly percentage is 0.006
+3it [00:00,  3.23it/s]Anomaly detection model DBSCAN_anomaly training seconds: 0.12138676643371582
+For hyper-params {'eps': 0.7, 'minSamples': 10}
+Anomaly percentage is 0.1255
 
-DBSCAN_anomaly
-For hyper-params {'eps': 1.6, 'minSamples': 10}
-Anomaly percentage is 0.006
+4it [00:01,  3.29it/s]Anomaly detection model DBSCAN_anomaly training seconds: 0.11643123626708984
+For hyper-params {'eps': 0.7, 'minSamples': 10}
+Anomaly percentage is 0.1365
 
-DBSCAN_anomaly
-For hyper-params {'eps': 1.6, 'minSamples': 10}
-Anomaly percentage is 0.0015
+5it [00:01,  3.34it/s]Anomaly detection model DBSCAN_anomaly training seconds: 0.11668753623962402
+For hyper-params {'eps': 0.7, 'minSamples': 10}
+Anomaly percentage is 0.1375
 
-DBSCAN_anomaly
-For hyper-params {'eps': 1.6, 'minSamples': 20}
-Anomaly percentage is 0.0175
+6it [00:01,  3.35it/s]Anomaly detection model DBSCAN_anomaly training seconds: 0.11564302444458008
+For hyper-params {'eps': 0.7, 'minSamples': 10}
+Anomaly percentage is 0.1315
 
-DBSCAN_anomaly
-For hyper-params {'eps': 1.6, 'minSamples': 20}
-Anomaly percentage is 0.0235
+7it [00:02,  3.38it/s]Anomaly detection model DBSCAN_anomaly training seconds: 0.11615395545959473
+For hyper-params {'eps': 0.7, 'minSamples': 10}
+Anomaly percentage is 0.1265
 
-DBSCAN_anomaly
-For hyper-params {'eps': 1.6, 'minSamples': 20}
-Anomaly percentage is 0.022
+8it [00:02,  3.38it/s]Anomaly detection model DBSCAN_anomaly training seconds: 0.11752605438232422
+For hyper-params {'eps': 0.7, 'minSamples': 10}
+Anomaly percentage is 0.1365
 
-DBSCAN_anomaly
-For hyper-params {'eps': 1.6, 'minSamples': 20}
-Anomaly percentage is 0.0225
+9it [00:02,  3.39it/s]Anomaly detection model DBSCAN_anomaly training seconds: 0.11652970314025879
+For hyper-params {'eps': 0.7, 'minSamples': 10}
+Anomaly percentage is 0.144
 
-DBSCAN_anomaly
-For hyper-params {'eps': 1.6, 'minSamples': 20}
-Anomaly percentage is 0.026
+10it [00:02,  3.34it/s]
 
-DBSCAN_anomaly
-For hyper-params {'eps': 1.6, 'minSamples': 20}
-Anomaly percentage is 0.02
+0it [00:00, ?it/s]Anomaly detection model DBSCAN_anomaly training seconds: 0.11507582664489746
+For hyper-params {'eps': 0.7, 'minSamples': 20}
+Anomaly percentage is 0.182
 
-DBSCAN_anomaly
-For hyper-params {'eps': 1.6, 'minSamples': 20}
-Anomaly percentage is 0.023
+1it [00:00,  3.44it/s]Anomaly detection model DBSCAN_anomaly training seconds: 0.1157538890838623
+For hyper-params {'eps': 0.7, 'minSamples': 20}
+Anomaly percentage is 0.184
 
-DBSCAN_anomaly
-For hyper-params {'eps': 1.6, 'minSamples': 20}
-Anomaly percentage is 0.02
+2it [00:00,  3.44it/s]Anomaly detection model DBSCAN_anomaly training seconds: 0.1158304214477539
+For hyper-params {'eps': 0.7, 'minSamples': 20}
+Anomaly percentage is 0.1815
 
-DBSCAN_anomaly
-For hyper-params {'eps': 1.6, 'minSamples': 20}
-Anomaly percentage is 0.019
+3it [00:00,  3.44it/s]Anomaly detection model DBSCAN_anomaly training seconds: 0.11690831184387207
+For hyper-params {'eps': 0.7, 'minSamples': 20}
+Anomaly percentage is 0.193
 
-DBSCAN_anomaly
-For hyper-params {'eps': 1.6, 'minSamples': 20}
-Anomaly percentage is 0.019
+4it [00:01,  3.43it/s]Anomaly detection model DBSCAN_anomaly training seconds: 0.1161184310913086
+For hyper-params {'eps': 0.7, 'minSamples': 20}
+Anomaly percentage is 0.1835
 
-DBSCAN_anomaly
-For hyper-params {'eps': 1.7, 'minSamples': 10}
-Anomaly percentage is 0.0065
+5it [00:01,  3.43it/s]Anomaly detection model DBSCAN_anomaly training seconds: 0.11670708656311035
+For hyper-params {'eps': 0.7, 'minSamples': 20}
+Anomaly percentage is 0.1795
 
-DBSCAN_anomaly
-For hyper-params {'eps': 1.7, 'minSamples': 10}
-Anomaly percentage is 0.0025
+6it [00:01,  3.43it/s]Anomaly detection model DBSCAN_anomaly training seconds: 0.11529397964477539
+For hyper-params {'eps': 0.7, 'minSamples': 20}
+Anomaly percentage is 0.1885
 
-DBSCAN_anomaly
-For hyper-params {'eps': 1.7, 'minSamples': 10}
-Anomaly percentage is 0.0015
+7it [00:02,  3.43it/s]Anomaly detection model DBSCAN_anomaly training seconds: 0.12170147895812988
+For hyper-params {'eps': 0.7, 'minSamples': 20}
+Anomaly percentage is 0.2015
 
-DBSCAN_anomaly
-For hyper-params {'eps': 1.7, 'minSamples': 10}
-Anomaly percentage is 0.003
+8it [00:02,  3.38it/s]Anomaly detection model DBSCAN_anomaly training seconds: 0.11620473861694336
+For hyper-params {'eps': 0.7, 'minSamples': 20}
+Anomaly percentage is 0.169
 
-DBSCAN_anomaly
-For hyper-params {'eps': 1.7, 'minSamples': 10}
-Anomaly percentage is 0.004
+9it [00:02,  3.35it/s]Anomaly detection model DBSCAN_anomaly training seconds: 0.11714529991149902
+For hyper-params {'eps': 0.7, 'minSamples': 20}
+Anomaly percentage is 0.179
 
-DBSCAN_anomaly
-For hyper-params {'eps': 1.7, 'minSamples': 10}
-Anomaly percentage is 0.0055
+10it [00:02,  3.40it/s]
 
-DBSCAN_anomaly
-For hyper-params {'eps': 1.7, 'minSamples': 10}
-Anomaly percentage is 0.002
+0it [00:00, ?it/s]Anomaly detection model DBSCAN_anomaly training seconds: 0.11542034149169922
+For hyper-params {'eps': 0.75, 'minSamples': 10}
+Anomaly percentage is 0.0995
 
-DBSCAN_anomaly
-For hyper-params {'eps': 1.7, 'minSamples': 10}
-Anomaly percentage is 0.0055
+1it [00:00,  3.33it/s]Anomaly detection model DBSCAN_anomaly training seconds: 0.11525154113769531
+For hyper-params {'eps': 0.75, 'minSamples': 10}
+Anomaly percentage is 0.1
 
-DBSCAN_anomaly
-For hyper-params {'eps': 1.7, 'minSamples': 10}
-Anomaly percentage is 0.006
+2it [00:00,  3.38it/s]Anomaly detection model DBSCAN_anomaly training seconds: 0.11831045150756836
+For hyper-params {'eps': 0.75, 'minSamples': 10}
+Anomaly percentage is 0.1015
 
-DBSCAN_anomaly
-For hyper-params {'eps': 1.7, 'minSamples': 10}
-Anomaly percentage is 0.0015
+3it [00:00,  3.39it/s]Anomaly detection model DBSCAN_anomaly training seconds: 0.11816120147705078
+For hyper-params {'eps': 0.75, 'minSamples': 10}
+Anomaly percentage is 0.1015
 
-DBSCAN_anomaly
-For hyper-params {'eps': 1.7, 'minSamples': 20}
-Anomaly percentage is 0.017
+4it [00:01,  3.41it/s]Anomaly detection model DBSCAN_anomaly training seconds: 0.11698365211486816
+For hyper-params {'eps': 0.75, 'minSamples': 10}
+Anomaly percentage is 0.11
 
-DBSCAN_anomaly
-For hyper-params {'eps': 1.7, 'minSamples': 20}
-Anomaly percentage is 0.023
+5it [00:01,  3.40it/s]Anomaly detection model DBSCAN_anomaly training seconds: 0.11904478073120117
+For hyper-params {'eps': 0.75, 'minSamples': 10}
+Anomaly percentage is 0.1175
 
-DBSCAN_anomaly
-For hyper-params {'eps': 1.7, 'minSamples': 20}
-Anomaly percentage is 0.021
+6it [00:01,  3.38it/s]Anomaly detection model DBSCAN_anomaly training seconds: 0.11573958396911621
+For hyper-params {'eps': 0.75, 'minSamples': 10}
+Anomaly percentage is 0.0925
 
-DBSCAN_anomaly
-For hyper-params {'eps': 1.7, 'minSamples': 20}
-Anomaly percentage is 0.0225
+7it [00:02,  3.40it/s]Anomaly detection model DBSCAN_anomaly training seconds: 0.11733031272888184
+For hyper-params {'eps': 0.75, 'minSamples': 10}
+Anomaly percentage is 0.0995
 
-DBSCAN_anomaly
-For hyper-params {'eps': 1.7, 'minSamples': 20}
-Anomaly percentage is 0.0255
+8it [00:02,  3.40it/s]Anomaly detection model DBSCAN_anomaly training seconds: 0.11909055709838867
+For hyper-params {'eps': 0.75, 'minSamples': 10}
+Anomaly percentage is 0.101
 
-DBSCAN_anomaly
-For hyper-params {'eps': 1.7, 'minSamples': 20}
-Anomaly percentage is 0.0195
+9it [00:02,  3.40it/s]Anomaly detection model DBSCAN_anomaly training seconds: 0.11790347099304199
+For hyper-params {'eps': 0.75, 'minSamples': 10}
+Anomaly percentage is 0.1175
 
-DBSCAN_anomaly
-For hyper-params {'eps': 1.7, 'minSamples': 20}
-Anomaly percentage is 0.0225
+10it [00:02,  3.40it/s]
 
-DBSCAN_anomaly
-For hyper-params {'eps': 1.7, 'minSamples': 20}
-Anomaly percentage is 0.016
+0it [00:00, ?it/s]Anomaly detection model DBSCAN_anomaly training seconds: 0.11610913276672363
+For hyper-params {'eps': 0.75, 'minSamples': 20}
+Anomaly percentage is 0.159
 
-DBSCAN_anomaly
-For hyper-params {'eps': 1.7, 'minSamples': 20}
-Anomaly percentage is 0.019
+1it [00:00,  3.44it/s]Anomaly detection model DBSCAN_anomaly training seconds: 0.11897826194763184
+For hyper-params {'eps': 0.75, 'minSamples': 20}
+Anomaly percentage is 0.162
 
-DBSCAN_anomaly
-For hyper-params {'eps': 1.7, 'minSamples': 20}
-Anomaly percentage is 0.019
+2it [00:00,  3.38it/s]Anomaly detection model DBSCAN_anomaly training seconds: 0.11734843254089355
+For hyper-params {'eps': 0.75, 'minSamples': 20}
+Anomaly percentage is 0.145
 
+3it [00:00,  3.38it/s]Anomaly detection model DBSCAN_anomaly training seconds: 0.11763811111450195
+For hyper-params {'eps': 0.75, 'minSamples': 20}
+Anomaly percentage is 0.177
 
-IsolationForest
+4it [00:01,  3.38it/s]Anomaly detection model DBSCAN_anomaly training seconds: 0.11924505233764648
+For hyper-params {'eps': 0.75, 'minSamples': 20}
+Anomaly percentage is 0.1555
+
+5it [00:01,  3.39it/s]Anomaly detection model DBSCAN_anomaly training seconds: 0.11839413642883301
+For hyper-params {'eps': 0.75, 'minSamples': 20}
+Anomaly percentage is 0.1545
+
+6it [00:01,  3.37it/s]Anomaly detection model DBSCAN_anomaly training seconds: 0.11717915534973145
+For hyper-params {'eps': 0.75, 'minSamples': 20}
+Anomaly percentage is 0.158
+
+7it [00:02,  3.38it/s]Anomaly detection model DBSCAN_anomaly training seconds: 0.13463377952575684
+For hyper-params {'eps': 0.75, 'minSamples': 20}
+Anomaly percentage is 0.1845
+
+8it [00:02,  3.33it/s]Anomaly detection model DBSCAN_anomaly training seconds: 0.11909866333007812
+For hyper-params {'eps': 0.75, 'minSamples': 20}
+Anomaly percentage is 0.152
+
+9it [00:02,  3.35it/s]Anomaly detection model DBSCAN_anomaly training seconds: 0.11902856826782227
+For hyper-params {'eps': 0.75, 'minSamples': 20}
+Anomaly percentage is 0.1505
+
+10it [00:02,  3.37it/s]
+ 33%|███▎      | 1/3 [00:17<00:35, 17.95s/it]
+0it [00:00, ?it/s]Anomaly detection model IsolationForest training seconds: 0.4638850688934326
 For hyper-params {'contamination': 0.01}
 Anomaly percentage is 0.01
 
-IsolationForest
+1it [00:00,  1.56it/s]Anomaly detection model IsolationForest training seconds: 0.4429202079772949
 For hyper-params {'contamination': 0.01}
 Anomaly percentage is 0.01
 
-IsolationForest
+2it [00:01,  1.59it/s]Anomaly detection model IsolationForest training seconds: 0.44388389587402344
 For hyper-params {'contamination': 0.01}
 Anomaly percentage is 0.01
 
-IsolationForest
+3it [00:01,  1.60it/s]Anomaly detection model IsolationForest training seconds: 0.46883368492126465
 For hyper-params {'contamination': 0.01}
 Anomaly percentage is 0.01
 
-IsolationForest
+4it [00:02,  1.58it/s]Anomaly detection model IsolationForest training seconds: 0.4658396244049072
 For hyper-params {'contamination': 0.01}
 Anomaly percentage is 0.01
 
-IsolationForest
+5it [00:03,  1.57it/s]Anomaly detection model IsolationForest training seconds: 0.49683046340942383
 For hyper-params {'contamination': 0.01}
 Anomaly percentage is 0.01
 
-IsolationForest
+6it [00:03,  1.53it/s]Anomaly detection model IsolationForest training seconds: 0.4940297603607178
 For hyper-params {'contamination': 0.01}
 Anomaly percentage is 0.01
 
-IsolationForest
+7it [00:04,  1.51it/s]Anomaly detection model IsolationForest training seconds: 0.4742715358734131
 For hyper-params {'contamination': 0.01}
 Anomaly percentage is 0.01
 
-IsolationForest
+8it [00:05,  1.52it/s]Anomaly detection model IsolationForest training seconds: 0.45239973068237305
 For hyper-params {'contamination': 0.01}
 Anomaly percentage is 0.01
 
-IsolationForest
+9it [00:05,  1.54it/s]Anomaly detection model IsolationForest training seconds: 0.44554638862609863
 For hyper-params {'contamination': 0.01}
 Anomaly percentage is 0.01
 
-IsolationForest
+10it [00:06,  1.55it/s]
+
+0it [00:00, ?it/s]Anomaly detection model IsolationForest training seconds: 0.43881940841674805
 For hyper-params {'contamination': 0.05}
 Anomaly percentage is 0.05
 
-IsolationForest
+1it [00:00,  1.60it/s]Anomaly detection model IsolationForest training seconds: 0.45165300369262695
 For hyper-params {'contamination': 0.05}
 Anomaly percentage is 0.05
 
-IsolationForest
+2it [00:01,  1.59it/s]Anomaly detection model IsolationForest training seconds: 0.44980931282043457
 For hyper-params {'contamination': 0.05}
 Anomaly percentage is 0.05
 
-IsolationForest
+3it [00:01,  1.59it/s]Anomaly detection model IsolationForest training seconds: 0.6020853519439697
 For hyper-params {'contamination': 0.05}
 Anomaly percentage is 0.05
 
-IsolationForest
+4it [00:02,  1.45it/s]Anomaly detection model IsolationForest training seconds: 0.4800760746002197
 For hyper-params {'contamination': 0.05}
 Anomaly percentage is 0.05
 
-IsolationForest
+5it [00:03,  1.48it/s]Anomaly detection model IsolationForest training seconds: 0.44736313819885254
 For hyper-params {'contamination': 0.05}
 Anomaly percentage is 0.05
 
-IsolationForest
+6it [00:03,  1.52it/s]Anomaly detection model IsolationForest training seconds: 0.4463961124420166
 For hyper-params {'contamination': 0.05}
 Anomaly percentage is 0.05
 
-IsolationForest
+7it [00:04,  1.54it/s]Anomaly detection model IsolationForest training seconds: 0.4630157947540283
 For hyper-params {'contamination': 0.05}
 Anomaly percentage is 0.05
 
-IsolationForest
+8it [00:05,  1.55it/s]Anomaly detection model IsolationForest training seconds: 0.45660996437072754
 For hyper-params {'contamination': 0.05}
 Anomaly percentage is 0.05
 
-IsolationForest
+9it [00:05,  1.55it/s]Anomaly detection model IsolationForest training seconds: 0.45026683807373047
 For hyper-params {'contamination': 0.05}
 Anomaly percentage is 0.05
 
-IsolationForest
+10it [00:06,  1.54it/s]
+
+0it [00:00, ?it/s]Anomaly detection model IsolationForest training seconds: 0.4560723304748535
 For hyper-params {'contamination': 0.1}
 Anomaly percentage is 0.1
 
-IsolationForest
+1it [00:00,  1.58it/s]Anomaly detection model IsolationForest training seconds: 0.4623098373413086
 For hyper-params {'contamination': 0.1}
 Anomaly percentage is 0.1
 
-IsolationForest
+2it [00:01,  1.57it/s]Anomaly detection model IsolationForest training seconds: 0.506798267364502
 For hyper-params {'contamination': 0.1}
 Anomaly percentage is 0.1
 
-IsolationForest
+3it [00:01,  1.52it/s]Anomaly detection model IsolationForest training seconds: 0.5118119716644287
 For hyper-params {'contamination': 0.1}
 Anomaly percentage is 0.1
 
-IsolationForest
+4it [00:02,  1.49it/s]Anomaly detection model IsolationForest training seconds: 0.4585886001586914
 For hyper-params {'contamination': 0.1}
 Anomaly percentage is 0.1
 
-IsolationForest
+5it [00:03,  1.52it/s]Anomaly detection model IsolationForest training seconds: 0.47519564628601074
 For hyper-params {'contamination': 0.1}
 Anomaly percentage is 0.1
 
-IsolationForest
+6it [00:03,  1.52it/s]Anomaly detection model IsolationForest training seconds: 0.4596896171569824
 For hyper-params {'contamination': 0.1}
 Anomaly percentage is 0.1
 
-IsolationForest
+7it [00:04,  1.54it/s]Anomaly detection model IsolationForest training seconds: 0.4722743034362793
 For hyper-params {'contamination': 0.1}
 Anomaly percentage is 0.1
 
-IsolationForest
+8it [00:05,  1.53it/s]Anomaly detection model IsolationForest training seconds: 0.469712495803833
 For hyper-params {'contamination': 0.1}
 Anomaly percentage is 0.1
 
-IsolationForest
+9it [00:05,  1.53it/s]Anomaly detection model IsolationForest training seconds: 0.489168643951416
 For hyper-params {'contamination': 0.1}
 Anomaly percentage is 0.1
 
+10it [00:06,  1.53it/s]
+ 67%|██████▋   | 2/3 [00:37<00:18, 18.85s/it]
+0it [00:00, ?it/s]Anomaly detection model DirectDistance training seconds: 41.650126934051514
+For hyper-params {'K_neighbor': 20, 'maxDistance': 0.45}
+Anomaly percentage is 0.486
 
-DirectDistance
-For hyper-params {'K_neighbor': 20, 'maxDistance': 1.5}
-Anomaly percentage is 0.0245
+1it [00:41, 41.82s/it]Anomaly detection model DirectDistance training seconds: 39.569722414016724
+For hyper-params {'K_neighbor': 20, 'maxDistance': 0.45}
+Anomaly percentage is 0.4885
 
-DirectDistance
-For hyper-params {'K_neighbor': 20, 'maxDistance': 1.5}
-Anomaly percentage is 0.029
+2it [01:21, 40.60s/it]Anomaly detection model DirectDistance training seconds: 39.72032332420349
+For hyper-params {'K_neighbor': 20, 'maxDistance': 0.45}
+Anomaly percentage is 0.4585
 
-DirectDistance
-For hyper-params {'K_neighbor': 20, 'maxDistance': 1.5}
-Anomaly percentage is 0.033
+3it [02:01, 40.28s/it]Anomaly detection model DirectDistance training seconds: 42.3594331741333
+For hyper-params {'K_neighbor': 20, 'maxDistance': 0.45}
+Anomaly percentage is 0.484
 
-DirectDistance
-For hyper-params {'K_neighbor': 20, 'maxDistance': 1.5}
-Anomaly percentage is 0.0315
+4it [02:43, 41.17s/it]Anomaly detection model DirectDistance training seconds: 40.36913537979126
+For hyper-params {'K_neighbor': 20, 'maxDistance': 0.45}
+Anomaly percentage is 0.4755
 
-DirectDistance
-For hyper-params {'K_neighbor': 20, 'maxDistance': 1.5}
-Anomaly percentage is 0.034
+5it [03:24, 40.94s/it]Anomaly detection model DirectDistance training seconds: 39.30830717086792
+For hyper-params {'K_neighbor': 20, 'maxDistance': 0.45}
+Anomaly percentage is 0.4825
 
-DirectDistance
-For hyper-params {'K_neighbor': 20, 'maxDistance': 1.5}
-Anomaly percentage is 0.03
+6it [04:04, 40.44s/it]Anomaly detection model DirectDistance training seconds: 37.39036202430725
+For hyper-params {'K_neighbor': 20, 'maxDistance': 0.45}
+Anomaly percentage is 0.4925
 
-DirectDistance
-For hyper-params {'K_neighbor': 20, 'maxDistance': 1.5}
-Anomaly percentage is 0.037
+7it [04:41, 39.50s/it]Anomaly detection model DirectDistance training seconds: 37.69586110115051
+For hyper-params {'K_neighbor': 20, 'maxDistance': 0.45}
+Anomaly percentage is 0.473
 
-DirectDistance
-For hyper-params {'K_neighbor': 20, 'maxDistance': 1.5}
-Anomaly percentage is 0.0295
+8it [05:19, 38.98s/it]Anomaly detection model DirectDistance training seconds: 38.6401264667511
+For hyper-params {'K_neighbor': 20, 'maxDistance': 0.45}
+Anomaly percentage is 0.478
 
-DirectDistance
-For hyper-params {'K_neighbor': 20, 'maxDistance': 1.5}
-Anomaly percentage is 0.029
+9it [05:58, 38.93s/it]Anomaly detection model DirectDistance training seconds: 38.893171072006226
+For hyper-params {'K_neighbor': 20, 'maxDistance': 0.45}
+Anomaly percentage is 0.4575
 
-DirectDistance
-For hyper-params {'K_neighbor': 20, 'maxDistance': 1.5}
-Anomaly percentage is 0.0345
+10it [06:37, 39.73s/it]
 
-DirectDistance
-For hyper-params {'K_neighbor': 20, 'maxDistance': 1.75}
-Anomaly percentage is 0.0185
+0it [00:00, ?it/s]Anomaly detection model DirectDistance training seconds: 39.582679271698
+For hyper-params {'K_neighbor': 20, 'maxDistance': 0.5}
+Anomaly percentage is 0.433
 
-DirectDistance
-For hyper-params {'K_neighbor': 20, 'maxDistance': 1.75}
-Anomaly percentage is 0.0245
+1it [00:39, 39.75s/it]Anomaly detection model DirectDistance training seconds: 39.139750242233276
+For hyper-params {'K_neighbor': 20, 'maxDistance': 0.5}
+Anomaly percentage is 0.445
 
-DirectDistance
-For hyper-params {'K_neighbor': 20, 'maxDistance': 1.75}
-Anomaly percentage is 0.023
+2it [01:19, 39.49s/it]Anomaly detection model DirectDistance training seconds: 38.60320782661438
+For hyper-params {'K_neighbor': 20, 'maxDistance': 0.5}
+Anomaly percentage is 0.4115
 
-DirectDistance
-For hyper-params {'K_neighbor': 20, 'maxDistance': 1.75}
-Anomaly percentage is 0.023
+3it [01:57, 39.17s/it]Anomaly detection model DirectDistance training seconds: 39.62107014656067
+For hyper-params {'K_neighbor': 20, 'maxDistance': 0.5}
+Anomaly percentage is 0.427
 
-DirectDistance
-For hyper-params {'K_neighbor': 20, 'maxDistance': 1.75}
-Anomaly percentage is 0.0275
+4it [02:37, 39.42s/it]Anomaly detection model DirectDistance training seconds: 38.50792193412781
+For hyper-params {'K_neighbor': 20, 'maxDistance': 0.5}
+Anomaly percentage is 0.4195
 
-DirectDistance
-For hyper-params {'K_neighbor': 20, 'maxDistance': 1.75}
-Anomaly percentage is 0.022
+5it [03:16, 39.15s/it]Anomaly detection model DirectDistance training seconds: 39.01099944114685
+For hyper-params {'K_neighbor': 20, 'maxDistance': 0.5}
+Anomaly percentage is 0.413
 
-DirectDistance
-For hyper-params {'K_neighbor': 20, 'maxDistance': 1.75}
-Anomaly percentage is 0.0245
+6it [03:55, 39.16s/it]Anomaly detection model DirectDistance training seconds: 38.49955916404724
+For hyper-params {'K_neighbor': 20, 'maxDistance': 0.5}
+Anomaly percentage is 0.447
 
-DirectDistance
-For hyper-params {'K_neighbor': 20, 'maxDistance': 1.75}
-Anomaly percentage is 0.0215
+7it [04:34, 39.00s/it]Anomaly detection model DirectDistance training seconds: 39.154624223709106
+For hyper-params {'K_neighbor': 20, 'maxDistance': 0.5}
+Anomaly percentage is 0.419
 
-DirectDistance
-For hyper-params {'K_neighbor': 20, 'maxDistance': 1.75}
-Anomaly percentage is 0.022
+8it [05:13, 39.11s/it]Anomaly detection model DirectDistance training seconds: 39.16342878341675
+For hyper-params {'K_neighbor': 20, 'maxDistance': 0.5}
+Anomaly percentage is 0.421
 
-DirectDistance
-For hyper-params {'K_neighbor': 20, 'maxDistance': 1.75}
-Anomaly percentage is 0.0215
+9it [05:52, 39.18s/it]Anomaly detection model DirectDistance training seconds: 38.50380873680115
+For hyper-params {'K_neighbor': 20, 'maxDistance': 0.5}
+Anomaly percentage is 0.4045
 
-DirectDistance
-For hyper-params {'K_neighbor': 20, 'maxDistance': 2}
-Anomaly percentage is 0.017
+10it [06:31, 39.15s/it]
 
-DirectDistance
-For hyper-params {'K_neighbor': 20, 'maxDistance': 2}
-Anomaly percentage is 0.022
+0it [00:00, ?it/s]Anomaly detection model DirectDistance training seconds: 38.989362716674805
+For hyper-params {'K_neighbor': 20, 'maxDistance': 0.55}
+Anomaly percentage is 0.3905
 
-DirectDistance
-For hyper-params {'K_neighbor': 20, 'maxDistance': 2}
-Anomaly percentage is 0.02
+1it [00:39, 39.16s/it]Anomaly detection model DirectDistance training seconds: 38.48154354095459
+For hyper-params {'K_neighbor': 20, 'maxDistance': 0.55}
+Anomaly percentage is 0.4035
 
-DirectDistance
-For hyper-params {'K_neighbor': 20, 'maxDistance': 2}
-Anomaly percentage is 0.0215
+2it [01:17, 38.86s/it]Anomaly detection model DirectDistance training seconds: 39.26996159553528
+For hyper-params {'K_neighbor': 20, 'maxDistance': 0.55}
+Anomaly percentage is 0.376
 
-DirectDistance
-For hyper-params {'K_neighbor': 20, 'maxDistance': 2}
-Anomaly percentage is 0.025
+3it [01:57, 39.13s/it]Anomaly detection model DirectDistance training seconds: 40.850682735443115
+For hyper-params {'K_neighbor': 20, 'maxDistance': 0.55}
+Anomaly percentage is 0.372
 
-DirectDistance
-For hyper-params {'K_neighbor': 20, 'maxDistance': 2}
-Anomaly percentage is 0.0205
+4it [02:38, 39.87s/it]Anomaly detection model DirectDistance training seconds: 40.03971481323242
+For hyper-params {'K_neighbor': 20, 'maxDistance': 0.55}
+Anomaly percentage is 0.3685
 
-DirectDistance
-For hyper-params {'K_neighbor': 20, 'maxDistance': 2}
-Anomaly percentage is 0.0205
+5it [03:18, 39.99s/it]Anomaly detection model DirectDistance training seconds: 38.908092975616455
+For hyper-params {'K_neighbor': 20, 'maxDistance': 0.55}
+Anomaly percentage is 0.3605
 
-DirectDistance
-For hyper-params {'K_neighbor': 20, 'maxDistance': 2}
-Anomaly percentage is 0.019
+6it [03:57, 39.68s/it]Anomaly detection model DirectDistance training seconds: 39.42133593559265
+For hyper-params {'K_neighbor': 20, 'maxDistance': 0.55}
+Anomaly percentage is 0.405
 
-DirectDistance
-For hyper-params {'K_neighbor': 20, 'maxDistance': 2}
-Anomaly percentage is 0.018
+7it [04:37, 39.65s/it]Anomaly detection model DirectDistance training seconds: 38.873387575149536
+For hyper-params {'K_neighbor': 20, 'maxDistance': 0.55}
+Anomaly percentage is 0.382
 
-DirectDistance
-For hyper-params {'K_neighbor': 20, 'maxDistance': 2}
-Anomaly percentage is 0.0175
+8it [05:16, 39.46s/it]Anomaly detection model DirectDistance training seconds: 39.19628286361694
+For hyper-params {'K_neighbor': 20, 'maxDistance': 0.55}
+Anomaly percentage is 0.371
 
-DirectDistance
-For hyper-params {'K_neighbor': 30, 'maxDistance': 1.5}
-Anomaly percentage is 0.0345
+9it [05:55, 39.43s/it]Anomaly detection model DirectDistance training seconds: 39.215606451034546
+For hyper-params {'K_neighbor': 20, 'maxDistance': 0.55}
+Anomaly percentage is 0.3655
 
-DirectDistance
-For hyper-params {'K_neighbor': 30, 'maxDistance': 1.5}
-Anomaly percentage is 0.039
+10it [06:34, 39.50s/it]
 
-DirectDistance
-For hyper-params {'K_neighbor': 30, 'maxDistance': 1.5}
-Anomaly percentage is 0.0435
+0it [00:00, ?it/s]Non anomaly hyper-params {'K_neighbor': 30, 'maxDistance': 0.45}
 
-DirectDistance
-For hyper-params {'K_neighbor': 30, 'maxDistance': 1.5}
-Anomaly percentage is 0.0435
+1it [00:39, 39.63s/it]Non anomaly hyper-params {'K_neighbor': 30, 'maxDistance': 0.45}
 
-DirectDistance
-For hyper-params {'K_neighbor': 30, 'maxDistance': 1.5}
-Anomaly percentage is 0.0515
+2it [01:18, 39.46s/it]Non anomaly hyper-params {'K_neighbor': 30, 'maxDistance': 0.45}
 
-DirectDistance
-For hyper-params {'K_neighbor': 30, 'maxDistance': 1.5}
-Anomaly percentage is 0.04
+3it [01:58, 39.57s/it]Non anomaly hyper-params {'K_neighbor': 30, 'maxDistance': 0.45}
 
-DirectDistance
-For hyper-params {'K_neighbor': 30, 'maxDistance': 1.5}
-Anomaly percentage is 0.0465
+4it [02:39, 39.90s/it]Non anomaly hyper-params {'K_neighbor': 30, 'maxDistance': 0.45}
 
-DirectDistance
-For hyper-params {'K_neighbor': 30, 'maxDistance': 1.5}
-Anomaly percentage is 0.0375
+5it [03:18, 39.85s/it]Non anomaly hyper-params {'K_neighbor': 30, 'maxDistance': 0.45}
 
-DirectDistance
-For hyper-params {'K_neighbor': 30, 'maxDistance': 1.5}
-Anomaly percentage is 0.038
+6it [03:58, 39.82s/it]Non anomaly hyper-params {'K_neighbor': 30, 'maxDistance': 0.45}
 
+7it [04:38, 39.83s/it]Non anomaly hyper-params {'K_neighbor': 30, 'maxDistance': 0.45}
 
-DirectDistance
-For hyper-params {'K_neighbor': 30, 'maxDistance': 1.5}
-Anomaly percentage is 0.0445
+8it [05:18, 40.02s/it]Non anomaly hyper-params {'K_neighbor': 30, 'maxDistance': 0.45}
 
+9it [05:58, 39.98s/it]Non anomaly hyper-params {'K_neighbor': 30, 'maxDistance': 0.45}
 
-DirectDistance
-For hyper-params {'K_neighbor': 30, 'maxDistance': 1.75}
-Anomaly percentage is 0.019
+10it [06:38, 39.83s/it]
 
-DirectDistance
-For hyper-params {'K_neighbor': 30, 'maxDistance': 1.75}
-Anomaly percentage is 0.0255
+0it [00:00, ?it/s]Anomaly detection model DirectDistance training seconds: 38.595643281936646
+For hyper-params {'K_neighbor': 30, 'maxDistance': 0.5}
+Anomaly percentage is 0.4895
 
-DirectDistance
-For hyper-params {'K_neighbor': 30, 'maxDistance': 1.75}
-Anomaly percentage is 0.0255
+1it [00:38, 38.77s/it]Anomaly detection model DirectDistance training seconds: 40.093499422073364
+For hyper-params {'K_neighbor': 30, 'maxDistance': 0.5}
+Anomaly percentage is 0.4915
 
-DirectDistance
-For hyper-params {'K_neighbor': 30, 'maxDistance': 1.75}
-Anomaly percentage is 0.0245
+2it [01:19, 39.65s/it]Anomaly detection model DirectDistance training seconds: 42.19020223617554
+For hyper-params {'K_neighbor': 30, 'maxDistance': 0.5}
+Anomaly percentage is 0.455
 
-DirectDistance
-For hyper-params {'K_neighbor': 30, 'maxDistance': 1.75}
-Anomaly percentage is 0.029
+3it [02:01, 40.89s/it]Anomaly detection model DirectDistance training seconds: 38.4219696521759
+For hyper-params {'K_neighbor': 30, 'maxDistance': 0.5}
+Anomaly percentage is 0.4835
 
-DirectDistance
-For hyper-params {'K_neighbor': 30, 'maxDistance': 1.75}
-Anomaly percentage is 0.0235
+4it [02:39, 39.98s/it]Anomaly detection model DirectDistance training seconds: 39.838409185409546
+For hyper-params {'K_neighbor': 30, 'maxDistance': 0.5}
+Anomaly percentage is 0.474
 
-DirectDistance
-For hyper-params {'K_neighbor': 30, 'maxDistance': 1.75}
-Anomaly percentage is 0.0265
+5it [03:19, 39.99s/it]Anomaly detection model DirectDistance training seconds: 38.6810781955719
+For hyper-params {'K_neighbor': 30, 'maxDistance': 0.5}
+Anomaly percentage is 0.4845
 
-DirectDistance
-For hyper-params {'K_neighbor': 30, 'maxDistance': 1.75}
-Anomaly percentage is 0.0245
+6it [03:58, 39.60s/it]Anomaly detection model DirectDistance training seconds: 38.377691984176636
+For hyper-params {'K_neighbor': 30, 'maxDistance': 0.5}
+Anomaly percentage is 0.491
 
-DirectDistance
-For hyper-params {'K_neighbor': 30, 'maxDistance': 1.75}
-Anomaly percentage is 0.023
+7it [04:37, 39.26s/it]Anomaly detection model DirectDistance training seconds: 39.74750757217407
+For hyper-params {'K_neighbor': 30, 'maxDistance': 0.5}
+Anomaly percentage is 0.4755
 
-DirectDistance
-For hyper-params {'K_neighbor': 30, 'maxDistance': 1.75}
-Anomaly percentage is 0.022
+8it [05:17, 39.47s/it]Anomaly detection model DirectDistance training seconds: 40.24712157249451
+For hyper-params {'K_neighbor': 30, 'maxDistance': 0.5}
+Anomaly percentage is 0.47
 
-DirectDistance
-For hyper-params {'K_neighbor': 30, 'maxDistance': 2}
-Anomaly percentage is 0.017
+9it [05:57, 39.77s/it]Anomaly detection model DirectDistance training seconds: 39.91559171676636
+For hyper-params {'K_neighbor': 30, 'maxDistance': 0.5}
+Anomaly percentage is 0.4535
 
-DirectDistance
-For hyper-params {'K_neighbor': 30, 'maxDistance': 2}
-Anomaly percentage is 0.023
+10it [06:37, 39.78s/it]
 
-DirectDistance
-For hyper-params {'K_neighbor': 30, 'maxDistance': 2}
-Anomaly percentage is 0.021
+0it [00:00, ?it/s]Anomaly detection model DirectDistance training seconds: 39.53752565383911
+For hyper-params {'K_neighbor': 30, 'maxDistance': 0.55}
+Anomaly percentage is 0.442
 
-DirectDistance
-For hyper-params {'K_neighbor': 30, 'maxDistance': 2}
-Anomaly percentage is 0.022
+1it [00:39, 39.71s/it]Anomaly detection model DirectDistance training seconds: 41.275331020355225
+For hyper-params {'K_neighbor': 30, 'maxDistance': 0.55}
+Anomaly percentage is 0.4435
 
-DirectDistance
-For hyper-params {'K_neighbor': 30, 'maxDistance': 2}
-Anomaly percentage is 0.0255
+2it [01:21, 40.73s/it]Anomaly detection model DirectDistance training seconds: 38.25009608268738
+For hyper-params {'K_neighbor': 30, 'maxDistance': 0.55}
+Anomaly percentage is 0.4085
 
-DirectDistance
-For hyper-params {'K_neighbor': 30, 'maxDistance': 2}
-Anomaly percentage is 0.0205
+3it [01:59, 39.67s/it]Anomaly detection model DirectDistance training seconds: 38.83400344848633
+For hyper-params {'K_neighbor': 30, 'maxDistance': 0.55}
+Anomaly percentage is 0.43
 
-DirectDistance
-For hyper-params {'K_neighbor': 30, 'maxDistance': 2}
-Anomaly percentage is 0.022
+4it [02:38, 39.41s/it]Anomaly detection model DirectDistance training seconds: 50.35237169265747
+For hyper-params {'K_neighbor': 30, 'maxDistance': 0.55}
+Anomaly percentage is 0.418
 
-DirectDistance
-For hyper-params {'K_neighbor': 30, 'maxDistance': 2}
-Anomaly percentage is 0.019
+5it [03:29, 43.42s/it]Anomaly detection model DirectDistance training seconds: 37.978567123413086
+For hyper-params {'K_neighbor': 30, 'maxDistance': 0.55}
+Anomaly percentage is 0.422
 
-DirectDistance
-For hyper-params {'K_neighbor': 30, 'maxDistance': 2}
-Anomaly percentage is 0.0195
+6it [04:07, 41.63s/it]Anomaly detection model DirectDistance training seconds: 38.41287350654602
+For hyper-params {'K_neighbor': 30, 'maxDistance': 0.55}
+Anomaly percentage is 0.441
 
-DirectDistance
-For hyper-params {'K_neighbor': 30, 'maxDistance': 2}
-Anomaly percentage is 0.0195
+7it [04:45, 40.63s/it]Anomaly detection model DirectDistance training seconds: 38.23585033416748
+For hyper-params {'K_neighbor': 30, 'maxDistance': 0.55}
+Anomaly percentage is 0.416
+
+8it [05:24, 39.92s/it]Anomaly detection model DirectDistance training seconds: 38.10119605064392
+For hyper-params {'K_neighbor': 30, 'maxDistance': 0.55}
+Anomaly percentage is 0.4165
+
+9it [06:02, 39.41s/it]Anomaly detection model DirectDistance training seconds: 38.092180490493774
+For hyper-params {'K_neighbor': 30, 'maxDistance': 0.55}
+Anomaly percentage is 0.4065
+
+10it [06:40, 40.08s/it]
+100%|██████████| 3/3 [40:18<00:00, 806.02s/it]
+alg type: DBSCAN_anomaly, hyper param: (0.75, 10)
+alg type: DBSCAN_anomaly, external variable: iYearwrk
+alg type: IsolationForest, hyper param: (0.01,)
+null hypothesis of paired ttest accepted - take first config
+alg type: IsolationForest, external variable: dAge
+alg type: DirectDistance, hyper param: (20, 0.55)
+alg type: DirectDistance, external variable: iYearwrk
+best alg: DirectDistance
+Anomaly detection model DirectDistance training seconds: 37.70101737976074
+For hyper-params {'K_neighbor': 20, 'maxDistance': 0.55}
+Anomaly percentage is 0.3905
+Anomaly detection model DirectDistance training seconds: 37.84840488433838
+For hyper-params {'K_neighbor': 20, 'maxDistance': 0.55}
+Anomaly percentage is 0.4035
+Anomaly detection model DirectDistance training seconds: 37.73211741447449
+For hyper-params {'K_neighbor': 20, 'maxDistance': 0.55}
+Anomaly percentage is 0.376
+Anomaly detection model DirectDistance training seconds: 37.4893913269043
+For hyper-params {'K_neighbor': 20, 'maxDistance': 0.55}
+Anomaly percentage is 0.372
+Anomaly detection model DirectDistance training seconds: 38.03573155403137
+For hyper-params {'K_neighbor': 20, 'maxDistance': 0.55}
+Anomaly percentage is 0.3685
+Anomaly detection model DirectDistance training seconds: 38.31053018569946
+For hyper-params {'K_neighbor': 20, 'maxDistance': 0.55}
+Anomaly percentage is 0.3605
+Anomaly detection model DirectDistance training seconds: 38.03188705444336
+For hyper-params {'K_neighbor': 20, 'maxDistance': 0.55}
+Anomaly percentage is 0.405
+Anomaly detection model DirectDistance training seconds: 37.50688910484314
+For hyper-params {'K_neighbor': 20, 'maxDistance': 0.55}
+Anomaly percentage is 0.382
+Anomaly detection model DirectDistance training seconds: 38.30101728439331
+For hyper-params {'K_neighbor': 20, 'maxDistance': 0.55}
+Anomaly percentage is 0.371
+Anomaly detection model DirectDistance training seconds: 37.84424304962158
+For hyper-params {'K_neighbor': 20, 'maxDistance': 0.55}
+Anomaly percentage is 0.3655
+
+Process finished with exit code 0
