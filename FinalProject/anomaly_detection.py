@@ -1,17 +1,17 @@
 import time
-
+import numpy
 import numpy as np
 from sklearn.cluster import DBSCAN
 from sklearn.ensemble import IsolationForest
-from scipy.spatial.distance import jaccard
 
 anomaly_detect_algs = ["DBSCAN_anomaly", "IsolationForest", "DirectDistance"]
 algo_types_anomaly_params = {
-    "DBSCAN_anomaly": {"eps": [0.45, 0.5, 0.55], "minSamples": [4, 10, 20]},
+    "DBSCAN_anomaly": {"eps": [0.65, 0.7, 0.75], "minSamples": [10, 20]},
     "IsolationForest": {"contamination": [0.01, 0.05, 0.1]},
-    "DirectDistance": {"K_neighbor": [20, 30], "maxDistance": [0.6, 0.7, 0.75]}
+    "DirectDistance": {"K_neighbor": [20, 30], "maxDistance": [0.45, 0.5, 0.55]}
 }
-# Optimal epsilon value for dbscan for clustering: 0.3.
+# Optimal epsilon value for dbscan for clustering according to optimal_dbscan_e.py: 0.5
+# Didn't work so well for anomaly detection :(
 
 # 5 diff methods:
 # 1- Statistical model (Example: MAD)  - assumes normal distribution. Fails
@@ -41,7 +41,7 @@ def apply_anomaly_detection(data_matrix, alg, hyper_params_config):
     """
     if alg == "DBSCAN_anomaly":
         model = DBSCAN(eps=hyper_params_config["eps"], min_samples=hyper_params_config["minSamples"]
-                       , metric=jaccard)
+                       , metric="euclidean")
 
         s = time.time()
         new_labels = model.fit_predict(data_matrix)
@@ -50,7 +50,7 @@ def apply_anomaly_detection(data_matrix, alg, hyper_params_config):
         new_labels[new_labels >= 0] = 0
         anomaly_percentage = len(new_labels[new_labels < 0]) / len(new_labels)
 
-        if anomaly_percentage <= 0.1:
+        if anomaly_percentage <= 0.5:
             print("Anomaly detection model {model} training seconds: {time}".format(model=alg, time=e - s))
             print("For hyper-params {0}".format(str(hyper_params_config)))
             print("Anomaly percentage is {0}".format(anomaly_percentage))
@@ -68,7 +68,7 @@ def apply_anomaly_detection(data_matrix, alg, hyper_params_config):
         new_labels[new_labels >= 0] = 0
         anomaly_percentage = len(new_labels[new_labels < 0]) / len(new_labels)
 
-        if anomaly_percentage <= 0.1:
+        if anomaly_percentage <= 0.5:
             print("Anomaly detection model {model} training seconds: {time}".format(model=alg, time=e - s))
             print("For hyper-params {0}".format(str(hyper_params_config)))
             print("Anomaly percentage is {0}".format(anomaly_percentage))
@@ -85,7 +85,7 @@ def apply_anomaly_detection(data_matrix, alg, hyper_params_config):
         for i in range(data_matrix.shape[0]):
             distances_to_i = np.zeros((data_matrix.shape[0]))
             for j in range(data_matrix.shape[0]):
-                distances_to_i[j] = jaccard(data_matrix[i], data_matrix[j])
+                distances_to_i[j] = numpy.linalg.norm(data_matrix[i]-data_matrix[j])
             sorted_distances = np.sort(distances_to_i)
             k_neighbor_distance = sorted_distances[k]
             if k_neighbor_distance <= max_distance:
@@ -95,7 +95,7 @@ def apply_anomaly_detection(data_matrix, alg, hyper_params_config):
         e = time.time()
         anomaly_percentage = len(new_labels[new_labels < 0]) / len(new_labels)
 
-        if anomaly_percentage <= 0.1:
+        if anomaly_percentage <= 0.5:
             print("Anomaly detection model {model} training seconds: {time}".format(model=alg, time=e - s))
             print("For hyper-params {0}".format(str(hyper_params_config)))
             print("Anomaly percentage is {0}".format(anomaly_percentage))

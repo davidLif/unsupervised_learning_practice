@@ -8,7 +8,7 @@ import pandas as pd
 
 def load_data():
     data_df = pd.read_csv("./DATA/USCensus1990.MCA_20features.csv")
-    return data_df.drop(columns="Unnamed: 0").sample(100000, random_state=0)  # train_data, test_data
+    return data_df.drop(columns="Unnamed: 0").sample(10000, random_state=0)  # train_data, test_data
 
 
 if __name__ == "__main__":
@@ -16,7 +16,7 @@ if __name__ == "__main__":
 
     data = load_data()
 
-    neigh = NearestNeighbors(n_neighbors=2)
+    neigh = NearestNeighbors(n_neighbors=2, metric="euclidean")
     nbrs = neigh.fit(data.drop(columns=external_variables))
     distances, indices = nbrs.kneighbors(data.drop(columns=external_variables))
     distances = np.sort(distances, axis=0)
